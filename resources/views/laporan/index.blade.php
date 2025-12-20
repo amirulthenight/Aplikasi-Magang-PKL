@@ -114,7 +114,7 @@
                             <h3 class="ml-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Laporan per Karyawan</h3>
                         </div>
                         <p class="mt-4 text-sm text-gray-600 dark:text-gray-400 flex-grow">
-                            Analisis detail riwayat dan statistik peminjaman untuk setiap individu karyawan.
+                            Analisis detail riwayat dan statistik peminjaman untuk setiap individu karyawan jer.
                         </p>
                         <a href="{{ route('laporan.perKaryawan') }}" class="mt-6 inline-flex items-center justify-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-500 focus:outline-none focus:border-blue-700 focus:ring focus:ring-blue-200 active:bg-blue-600 disabled:opacity-25 transition">
                             Buka Laporan
