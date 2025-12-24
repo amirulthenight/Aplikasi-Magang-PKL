@@ -111,7 +111,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-4.663M12 5.25a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
                                 </svg>
                             </div>
-                            <h3 class="ml-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Laporan per Karyawan</h3>
+                            <h3 class="ml-4 text-lg font-semibold text-gray-800 dark:text-gray-200">Laporan Peminjaman per Karyawan</h3>
                         </div>
                         <p class="mt-4 text-sm text-gray-600 dark:text-gray-400 flex-grow">
                             Analisis detail riwayat dan statistik peminjaman untuk setiap individu karyawan jer.

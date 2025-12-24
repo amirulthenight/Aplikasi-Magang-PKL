@@ -23,19 +23,8 @@
                     <form method="POST" action="{{ route('peminjaman.store') }}">
                         @csrf
 
-                        {{-- Pilih Barang --}}
-                        <div class="mt-4">
-                            <x-input-label for="barang_id" :value="__('Pilih Barang (Hanya yang Tersedia)')" />
-                            <select name="barang_id" id="barang_id" class="block mt-1 w-full select2-search" required>
-                                <option></option>
-                                @foreach ($barangs as $barang)
-                                <option value="{{ $barang->id }}" @if(old('barang_id')==$barang->id) selected @endif>
-                                    {{ $barang->nama_barang }} ({{ $barang->kode_barang }})
-                                </option>
-                                @endforeach
-                            </select>
-                            <x-input-error :messages="$errors->get('barang_id')" class="mt-2" />
-                        </div>
+
+
 
                         {{-- Pilih Karyawan --}}
                         <div class="mt-4">
@@ -49,6 +38,19 @@
                                 @endforeach
                             </select>
                             <x-input-error :messages="$errors->get('karyawan_id')" class="mt-2" />
+                        </div>
+                        {{-- Pilih Barang --}}
+                        <div class="mt-4">
+                            <x-input-label for="barang_id" :value="__('Pilih Barang (Hanya yang Tersedia)')" />
+                            <select name="barang_id" id="barang_id" class="block mt-1 w-full select2-search" required>
+                                <option></option>
+                                @foreach ($barangs as $barang)
+                                <option value="{{ $barang->id }}" @if(old('barang_id')==$barang->id) selected @endif>
+                                    {{ $barang->nama_barang }} ({{ $barang->kode_barang }})
+                                </option>
+                                @endforeach
+                            </select>
+                            <x-input-error :messages="$errors->get('barang_id')" class="mt-2" />
                         </div>
 
                         {{-- Tanggal Pinjam dan Wajib Kembali --}}
