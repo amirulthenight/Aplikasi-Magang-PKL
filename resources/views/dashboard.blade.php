@@ -280,34 +280,49 @@
                 {{-- Ketersediaan (Final dengan Ikon Tren + Panah yang Konsisten) --}}
                 @php
                 if ($availablePercentage > 50) {
-                $color = 'green';
-                // Ikon garis tren NAIK dengan ujung panah
+                // Kondisi Aman (Hijau)
                 $iconPath = 'M3 17l6-6l4 4l8-8 M17 3h4v4';
+                $ringClass = 'group-hover:ring-green-300 dark:group-hover:ring-green-600';
+                $textClass = 'text-green-800 dark:text-green-200';
+                $bgIconClass = 'bg-gradient-to-br from-green-100 to-green-200 dark:bg-gradient-to-br dark:from-green-900/50 dark:to-green-800/60';
+                $iconColorClass = 'text-green-600 dark:text-green-400';
+                $barBgClass = 'bg-green-200';
+                $barFillClass = 'bg-green-500';
                 } elseif ($availablePercentage > 30) {
-                $color = 'yellow';
-                // Ikon garis tren AGAK TURUN dengan ujung panah
+                // Kondisi Waspada (Kuning)
                 $iconPath = 'M3 13l6 2l4-2l8 2 M17 11h4v4';
+                $ringClass = 'group-hover:ring-yellow-300 dark:group-hover:ring-yellow-600';
+                $textClass = 'text-yellow-800 dark:text-yellow-200';
+                $bgIconClass = 'bg-gradient-to-br from-yellow-100 to-yellow-200 dark:bg-gradient-to-br dark:from-yellow-900/50 dark:to-yellow-800/60';
+                $iconColorClass = 'text-yellow-600 dark:text-yellow-400';
+                $barBgClass = 'bg-yellow-200';
+                $barFillClass = 'bg-yellow-500';
                 } else {
-                $color = 'red';
-                // Ikon garis tren TURUN TAJAM dengan ujung panah
+                // Kondisi Bahaya (Merah)
                 $iconPath = 'M3 7l6 6l4-4l8 8 M17 21h4v-4';
+                $ringClass = 'group-hover:ring-red-300 dark:group-hover:ring-red-600';
+                $textClass = 'text-red-800 dark:text-red-200';
+                $bgIconClass = 'bg-gradient-to-br from-red-100 to-red-200 dark:bg-gradient-to-br dark:from-red-900/50 dark:to-red-800/60';
+                $iconColorClass = 'text-red-600 dark:text-red-400';
+                $barBgClass = 'bg-red-200';
+                $barFillClass = 'bg-red-500';
                 }
                 @endphp
                 <a href="{{ route('barang.index') }}" class="stat-card block transition-all duration-500 transform hover:-translate-y-1.5 group opacity-0 translate-y-4">
-                    <div class="flex flex-col justify-between p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800 hover:shadow-xl h-full group-hover:ring-2 group-hover:ring-{{$color}}-300 dark:group-hover:ring-{{$color}}-600">
+                    <div class="flex flex-col justify-between p-6 bg-white rounded-xl shadow-lg dark:bg-gray-800 hover:shadow-xl h-full group-hover:ring-2 {{ $ringClass }}">
                         <div class="flex items-start justify-between">
                             <div>
                                 <p class="text-sm font-semibold text-gray-500 dark:text-gray-400">Available %</p>
-                                <p class="text-2xl font-bold text-{{$color}}-800 dark:text-{{$color}}-200">{{ $availablePercentage }}%</p>
+                                <p class="text-2xl font-bold {{ $textClass }}">{{ $availablePercentage }}%</p>
                             </div>
-                            <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-gradient-to-br from-{{$color}}-100 to-{{$color}}-200 rounded-full dark:bg-gradient-to-br dark:from-{{$color}}-900/50 dark:to-{{$color}}-800/60">
-                                <svg class="w-6 h-6 text-{{$color}}-600 dark:text-{{$color}}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full {{ $bgIconClass }}">
+                                <svg class="w-6 h-6 {{ $iconColorClass }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $iconPath }}"></path>
                                 </svg>
                             </div>
                         </div>
-                        <div class="w-full h-2 mt-4 bg-{{$color}}-200 rounded-full dark:bg-gray-700">
-                            <div class="h-2 rounded-full bg-{{$color}}-500" style="width: {{ $availablePercentage }}%"></div>
+                        <div class="w-full h-2 mt-4 rounded-full dark:bg-gray-700 {{ $barBgClass }}">
+                            <div class="h-2 rounded-full {{ $barFillClass }}" style="width: {{ $availablePercentage.'%' }}"></div>
                         </div>
                     </div>
                 </a>
