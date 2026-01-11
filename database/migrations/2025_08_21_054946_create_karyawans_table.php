@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('karyawans', function (Blueprint $table) {
             $table->id();
-            $table->string('nip')->unique();
+            $table->string('nik')->unique();
             $table->string('nama_karyawan');
+            $table->string('email')->unique()->nullable(); // Tambahkan kolom email
             $table->string('jabatan');
             $table->string('departemen');
+            $table->string('site')->nullable(); // Tambahkan kolom site
+            $table->text('keterangan')->nullable(); // Tambahkan kolom keterangan
             $table->timestamps();
         });
     }

@@ -26,9 +26,12 @@ class KaryawanController extends Controller
                 ->orWhere('departemen', 'like', '%' . $request->search . '%');
         }
 
+        // PERBAIKAN DI SINI: Sesuaikan nama kolom dengan database baru
         $karyawans = $query->withCount(['peminjamans as peminjaman_terlambat_count' => function ($query) {
-            $query->where('status', 'Dipinjam')->where('tanggal_wajib_kembali', '<', now());
+            $query->where('status_peminjaman', 'Dipinjam') // Cek status aja biar aman
+                ->where('tanggal_kembali_rencana', '<', now()); // Pakai nama kolom yang benar
         }])->latest()->paginate(10);
+
         return view('karyawan.index', compact('karyawans'));
     }
 
@@ -46,12 +49,13 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nik' => 'required|string|max:255|unique:karyawans',
+            'nik'           => 'required|string|max:255|unique:karyawans,nik',
             'nama_karyawan' => 'required|string|max:255',
-            'jabatan' => 'required|string|max:255',
-            'departemen' => 'required|string|max:255',
-            'site' => 'nullable|string|max:255',
-            'keterangan' => 'nullable|string',
+            'email'         => 'nullable|email|max:255|unique:karyawans,email',
+            'jabatan'       => 'required|string|max:255',
+            'departemen'    => 'required|string|max:255',
+            'site'          => 'nullable|string|max:255',
+            'keterangan'    => 'nullable|string',
         ]);
 
         Karyawan::create($request->all());
@@ -73,14 +77,13 @@ class KaryawanController extends Controller
     public function update(Request $request, Karyawan $karyawan)
     {
         $request->validate([
-            'nik' => 'required|string|max:255|unique:karyawans,nik,' . $karyawan->id,
+            'nik'           => 'required|string|max:255|unique:karyawans,nik,' . $karyawan->id,
             'nama_karyawan' => 'required|string|max:255',
-            'email' => 'required|string|max:255',
-            'jabatan' => 'required|string|max:255',
-            'departemen' => 'required|string|max:255',
-            'site' => 'required|string|max:255',
-            'keterangan' => 'nullable|string',
-
+            'email'         => 'nullable|email|max:255|unique:karyawans,email,' . $karyawan->id,
+            'jabatan'       => 'required|string|max:255',
+            'departemen'    => 'required|string|max:255',
+            'site'          => 'nullable|string|max:255',
+            'keterangan'    => 'nullable|string',
         ]);
 
         $karyawan->update($request->all());
@@ -203,7 +206,7 @@ class KaryawanController extends Controller
 
         // Cari semua peminjaman yang sedang terlambat HANYA untuk karyawan ini
         $peminjamanTerlambat = $karyawan->peminjamans()
-            ->where('status', 'Dipinjam')
+            ->whereNull('tanggal_kembali')
             ->where('tanggal_wajib_kembali', '<', now())
             ->get();
 

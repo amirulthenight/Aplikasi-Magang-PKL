@@ -138,7 +138,7 @@
                                     <th scope="col" class="px-6 py-3">Jabatan</th>
                                     <th scope="col" class="px-6 py-3">Departemen</th>
                                     <th scope="col" class="px-6 py-3">Site</th>
-                                    <th scope="col" class="px-6 py-3">Keterangan</th>
+
                                     <th scope="col" class="px-6 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -164,10 +164,10 @@
                                     <td class="px-6 py-4">{{ $karyawan->departemen ?? '-' }}</td>
                                     <td class="px-6 py-4">{{ $karyawan->site ?? '-' }}</td>
 
-                                    {{-- PERBAIKAN 3: Kolom keterangan dirapikan --}}
+                                    <!-- {{-- PERBAIKAN 3: Kolom keterangan dirapikan --}}
                                     <td class="px-6 py-4" title="{{ $karyawan->keterangan }}">
                                         {{ \Illuminate\Support\Str::limit($karyawan->keterangan, 50, '...') }}
-                                    </td>
+                                    </td> -->
 
                                     {{-- Kolom Aksi dengan Tombol Pintar --}}
                                     <td class="px-6 py-4 text-right">

@@ -18,7 +18,7 @@ class Karyawan extends Model
         'jabatan',
         'departemen',
         'site',
-        'keterangan',
+
     ];
 
     public function peminjamans()

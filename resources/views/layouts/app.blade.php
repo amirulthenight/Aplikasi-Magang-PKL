@@ -100,36 +100,15 @@
             <div class="flex items-center justify-center h-20 border-b dark:border-gray-700">
                 <a href="{{ route('dashboard') }}" class="text-center">
                     <div class="text-3xl font-bold tracking-wider">
-
-                        {{--LOGO BUMA YANG DIGUNAKAN SEKARANG DAN MASIH YANG TERBAIK!--}}
+                        {{--LOGO BUMA--}}
                         <span class="text-green-600 dark:text-green-500">L</span><span class="text-green-600 dark:text-green-500">O</span><span class="bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text">G</span><span class="text-green-600 dark:text-green-500">O</span>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 tracking-wider">IT ASSET MANAGEMENT</p>
                 </a>
             </div>
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+
+                {{-- 1. DASHBOARD --}}
                 <x-sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">{{ __('Dashboard') }}
                     <x-slot name="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -137,8 +116,11 @@
                         </svg>
                     </x-slot>
                 </x-sidebar-link>
+
                 @admin
-                <p class="px-4 pt-4 text-xs font-semibold text-gray-500 uppercase">Admin Menu</p>
+                <p class="px-4 pt-4 text-xs font-semibold text-gray-500 uppercase">Menu Utama</p>
+
+                {{-- 2. DATA BARANG --}}
                 <x-sidebar-link :href="route('barang.index')" :active="request()->routeIs('barang.*')">
                     <x-slot name="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -147,6 +129,8 @@
                     </x-slot>
                     {{ __('Data Barang') }}
                 </x-sidebar-link>
+
+                {{-- 3. DATA KARYAWAN --}}
                 <x-sidebar-link :href="route('karyawan.index')" :active="request()->routeIs('karyawan.*')">
                     <x-slot name="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -155,16 +139,32 @@
                     </x-slot>
                     {{ __('Data Karyawan') }}
                 </x-sidebar-link>
-                <x-sidebar-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.*')">
+
+                {{-- 4. RIWAYAT PEMINJAMAN --}}
+                <x-sidebar-link :href="route('peminjaman.index')" :active="request()->routeIs('peminjaman.index')">
                     <x-slot name="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                             <path fill-rule="evenodd" d="M15.988 3.012A2.25 2.25 0 0 1 18 5.25v6.5A2.25 2.25 0 0 1 15.75 14H13.5V7A2.5 2.5 0 0 0 11 4.5H8.128a2.252 2.252 0 0 1 1.884-1.488A2.25 2.25 0 0 1 12.25 1h1.5a2.25 2.25 0 0 1 2.238 2.012ZM11.5 3.25a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 .75.75v.25h-3v-.25Z" clip-rule="evenodd" />
                             <path fill-rule="evenodd" d="M2 7a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7Zm2 3.25a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Zm0 3.5a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd" />
                         </svg>
                     </x-slot>
-                    {{ __('Data Peminjaman') }}
+                    {{ __('Riwayat Peminjaman') }}
                 </x-sidebar-link>
 
+                {{-- 5. FORM PENGEMBALIAN (FITUR KHUSUS) --}}
+                {{-- SAYA PINDAHKAN KESINI SUPAYA URUTANNYA JELAS SETELAH RIWAYAT --}}
+                <x-sidebar-link :href="route('peminjaman.indexPengembalianCepat')" :active="request()->routeIs('peminjaman.indexPengembalianCepat')">
+                    <x-slot name="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-orange-500">
+                            <path fill-rule="evenodd" d="M15.28 3.22a.75.75 0 0 0-1.06 0l-6.5 6.5a.75.75 0 0 0 0 1.06l6.5 6.5a.75.75 0 0 0 1.06-1.06L9.31 10l5.97-5.97a.75.75 0 0 0 0-1.06ZM4.75 3.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" clip-rule="evenodd" />
+                        </svg>
+                    </x-slot>
+                    <span class="font-bold text-orange-600 dark:text-orange-400">{{ __('Form Pengembalian') }}</span>
+                </x-sidebar-link>
+                @endadmin
+
+                {{-- KHUSUS ADMIN & KEPALA --}}
+                @if (Auth::user()->role === 'admin' || Auth::user()->role === 'kepala')
                 <x-sidebar-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
                     <x-slot name="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -173,18 +173,17 @@
                     </x-slot>
                     {{ __('Data Laporan') }}
                 </x-sidebar-link>
-                @endadmin
+                @endif
             </nav>
         </aside>
 
-        <!-- Sidebar Mobile (Overlay) -->
         <div x-show="sidebarOpen" class="sm:hidden" x-cloak>
-            <div x-show="sidebarOpen" x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-600 bg-opacity-75" @click="sidebarOpen = false"></div>
-            <aside x-show="sidebarOpen" x-transition:enter="transition ease-in-out duration-300 transform" x-transition:enter-start="-translate-x-full" x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in-out duration-300 transform" x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full" class="fixed top-0 left-0 bottom-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl flex flex-col flex-shrink-0">
+            <div x-show="sidebarOpen" class="fixed inset-0 bg-gray-600 bg-opacity-75" @click="sidebarOpen = false"></div>
+            <aside x-show="sidebarOpen" class="fixed top-0 left-0 bottom-0 z-40 w-64 bg-white dark:bg-gray-800 shadow-xl flex flex-col flex-shrink-0">
                 <div class="flex items-center justify-center h-20 border-b border-gray-200 dark:border-gray-700/50 flex-shrink-0 ">
                     <a href="{{ route('dashboard') }}" class="text-center logo-container">
                         <div class="text-3xl font-bold tracking-wider">
-                            <span class="logo-letter-sidebar text-green-600 dark:text-green-500" style="transition-delay: 0s">B</span><span class="logo-letter-sidebar text-green-600 dark:text-green-500" style="transition-delay: 50ms">U</span><span class="logo-letter-sidebar bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text" style="transition-delay: 100ms">M</span><span class="logo-letter-sidebar text-green-600 dark:text-green-500" style="transition-delay: 150ms">A</span>
+                            <span class="logo-letter-sidebar text-green-600 dark:text-green-500">B</span><span class="logo-letter-sidebar text-green-600 dark:text-green-500">U</span><span class="logo-letter-sidebar bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text">M</span><span class="logo-letter-sidebar text-green-600 dark:text-green-500">A</span>
                         </div>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 tracking-wider">IT ASSET MANAGEMENT</p>
                     </a>
@@ -197,6 +196,7 @@
                             </svg>
                         </x-slot>
                     </x-sidebar-link>
+
                     @admin
                     <p class="px-4 pt-4 text-xs font-semibold text-gray-500 uppercase">Menu Utama</p>
                     <x-sidebar-link :href="route('barang.index')" :active="request()->routeIs('barang.*')">
@@ -224,6 +224,20 @@
                         </x-slot>
                         {{ __('Data Peminjaman') }}
                     </x-sidebar-link>
+
+                    {{-- MOBILE MENU: FORM PENGEMBALIAN JUGA DI SINI --}}
+                    <x-sidebar-link :href="route('peminjaman.indexPengembalianCepat')" :active="request()->routeIs('peminjaman.indexPengembalianCepat')">
+                        <x-slot name="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-orange-500">
+                                <path fill-rule="evenodd" d="M15.28 3.22a.75.75 0 0 0-1.06 0l-6.5 6.5a.75.75 0 0 0 0 1.06l6.5 6.5a.75.75 0 0 0 1.06-1.06L9.31 10l5.97-5.97a.75.75 0 0 0 0-1.06ZM4.75 3.5a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" clip-rule="evenodd" />
+                            </svg>
+                        </x-slot>
+                        <span class="font-bold text-orange-600 dark:text-orange-400">{{ __('Form Pengembalian') }}</span>
+                    </x-sidebar-link>
+
+                    @endadmin
+
+                    @if (Auth::user()->role === 'admin' || Auth::user()->role === 'kepala')
                     <x-sidebar-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">
                         <x-slot name="icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -232,7 +246,7 @@
                         </x-slot>
                         {{ __('Data Laporan') }}
                     </x-sidebar-link>
-                    @endadmin
+                    @endif
                 </nav>
             </aside>
         </div>
@@ -253,7 +267,6 @@
                 {{ $slot }}
             </main>
 
-            <!-- Footer Copyright -->
             <footer class="text-center py-4 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900">
                 Copyright &copy; {{ date('Y') }} PT Bukit Makmur Mandiri Utama Jobsite ADT. All Rights Reserved.
             </footer>

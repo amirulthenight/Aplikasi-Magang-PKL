@@ -2,42 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Peminjaman;
 use App\Models\Barang;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB; // Pastikan ini ada
-use Exception; // Tambahkan ini untuk menangani error
+use Illuminate\Support\Facades\DB;
 
 class PeminjamanController extends Controller
 {
+    /**
+     * Menampilkan daftar peminjaman (Riwayat)
+     */
     public function index(Request $request)
     {
-        $status = $request->query('status');
-        $query = Peminjaman::with(['barang', 'karyawan']);
+        // 1. Ambil inputan dari form filter
+        $status = $request->input('status');
+        $search = $request->input('search');
 
-        // Logika Pencarian Baru
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function($q) use ($search) {
-                $q->whereHas('karyawan', function ($subq) use ($search) {
-                    $subq->where('nama_karyawan', 'like', "%{$search}%");
-                })->orWhereHas('barang', function ($subq) use ($search) {
-                    $subq->where('nama_barang', 'like', "%{$search}%");
-                });
+        // 2. Query Dasar
+        $query = Peminjaman::with(['karyawan', 'barang']);
+
+        // 3. LOGIKA SEARCH (Ini yang kemaren KURANG)
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                // Cari di tabel Karyawan (Nama atau NIK)
+                $q->whereHas('karyawan', function ($k) use ($search) {
+                    $k->where('nama_karyawan', 'like', '%' . $search . '%')
+                        ->orWhere('nik', 'like', '%' . $search . '%');
+                })
+                    // Atau cari di tabel Barang (Nama Barang)
+                    ->orWhereHas('barang', function ($b) use ($search) {
+                        $b->where('nama_barang', 'like', '%' . $search . '%');
+                    });
             });
         }
 
-        if ($status === 'Selesai') {
-            // Jika filter "Selesai", tampilkan yang selesai dan urutkan berdasarkan tanggal kembali terbaru
-            $query->where('status', 'Selesai')->orderBy('tanggal_kembali', 'desc');
-        } elseif ($status === 'Semua') {
-            // Jika filter "Semua", urutkan berdasarkan tanggal dibuat terbaru
-            $query->latest();
-        } else {
-            // Secara default, tampilkan yang masih berjalan dan urutkan berdasarkan tanggal wajib kembali terdekat
-            $query->whereIn('status', ['Dipinjam', 'Terlambat'])->orderBy('tanggal_wajib_kembali', 'asc');
+        // 4. LOGIKA STATUS (Saya rapikan biar cocok sama View)
+        if ($status === 'selesai') {
+            // Tampilkan yang sudah kembali
+            $query->where('status_peminjaman', 'Kembali')
+                ->orderBy('tanggal_kembali_aktual', 'desc');
+        } elseif ($status === 'berjalan' || $status == '') { // Default 'Berjalan'
+            // Tampilkan Dipinjam / Terlambat
+            $query->whereIn('status_peminjaman', ['Dipinjam', 'Terlambat'])
+                ->orderBy('tanggal_kembali_rencana', 'asc');
         }
+        // Kalau 'semua', dia gak masuk if/else di atas (alias tampilkan semua)
 
         $peminjamans = $query->paginate(10);
 
@@ -46,69 +57,79 @@ class PeminjamanController extends Controller
 
     public function create()
     {
-        $barangs = Barang::where('status', 'Tersedia')->get();
-        $karyawans = Karyawan::all();
-        return view('peminjaman.create', compact('barangs', 'karyawans'));
+        // Urutkan nama karyawan sesuai kolom database baru
+        $karyawans = Karyawan::orderBy('nama_karyawan', 'asc')->get();
+
+        // Cuma ambil barang yang stoknya ada
+        $barangs = Barang::where('stok', '>', 0)->get();
+
+        return view('peminjaman.create', compact('karyawans', 'barangs'));
     }
 
+    /**
+     * Menyimpan Data Peminjaman (Mengurangi Stok)
+     */
     public function store(Request $request)
     {
-        $request->validate([
-            'barang_id' => 'required|exists:barangs,id',
+        // 1. Validasi
+        $validatedData = $request->validate([
             'karyawan_id' => 'required|exists:karyawans,id',
+            'barang_id' => 'required|exists:barangs,id',
             'tanggal_pinjam' => 'required|date',
             'tanggal_wajib_kembali' => 'required|date|after_or_equal:tanggal_pinjam',
-            'alasan_pinjam' => 'required|string',
+            'alasan_pinjam' => 'nullable', // Boleh kosong biar gak ribet
         ]);
 
-        // Cek ketersediaan barang SEBELUM memulai transaksi
-        $barang = Barang::find($request->barang_id);
-        if ($barang->status !== 'Tersedia') {
-            return redirect()->back()->with('error', 'Barang sedang tidak tersedia untuk dipinjam.')->withInput();
+        // 2. Cek Stok
+        $barang = Barang::findOrFail($validatedData['barang_id']);
+        if ($barang->stok < 1) {
+            return redirect()->back()->with('error', 'Stok habis!')->withInput();
         }
 
-        try {
-            // Mulai transaksi
-            DB::transaction(function () use ($request, $barang) {
-                // 1. Buat catatan peminjaman
-                Peminjaman::create($request->all());
+        // 3. Simpan ke Database
+        Peminjaman::create([
+            'karyawan_id' => $validatedData['karyawan_id'],
+            'barang_id' => $validatedData['barang_id'],
+            'tanggal_pinjam' => $validatedData['tanggal_pinjam'],
 
-                // 2. Ubah status barang
-                $barang->update(['status' => 'Dipinjam']);
-            });
+            // Kolom tanggal balik (JANGAN DIHAPUS)
+            'tanggal_kembali_rencana' => $validatedData['tanggal_wajib_kembali'],
 
-            // Redirect jika semua operasi dalam transaksi berhasil
-            return redirect()->route('peminjaman.index')->with('success', 'Barang berhasil dipinjam.');
-        } catch (Exception $e) {
-            // Jika terjadi error APAPUN di dalam transaksi, redirect dengan pesan error
-            return redirect()->back()->with('error', 'Gagal memproses peminjaman. Silakan coba lagi.')->withInput();
-        }
+            // KITA KEMBALIKAN JADI ALASAN_PINJAM (Sesuai database Abang)
+            'alasan_pinjam' => $request->input('alasan_pinjam'),
+
+            'status_peminjaman' => 'Dipinjam',
+        ]);
+
+        // 4. Kurangi Stok
+        $barang->decrement('stok');
+
+        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil disimpan.');
     }
 
-    public function kembalikan(Peminjaman $peminjaman)
+    /**
+     * Pengembalian Barang
+     */
+    public function kembalikan($id)
     {
-        // Terapkan juga di sini untuk konsistensi
-        DB::transaction(function () use ($peminjaman) {
-            // 1. Update status peminjaman
-            $peminjaman->update([
-                'status' => 'Selesai',
-                'tanggal_kembali' => now(), // now() adalah helper yang lebih singkat
-            ]);
+        $peminjaman = Peminjaman::findOrFail($id);
 
-            // 2. Update status barang
-            $peminjaman->barang->update(['status' => 'Tersedia']);
-        });
+        $peminjaman->update([
+            'status_peminjaman' => 'Kembali',
+            'tanggal_kembali_aktual' => now()
+        ]);
 
-        return redirect()->route('peminjaman.index')->with('success', 'Barang berhasil dikembalikan.');
+        // Balikin Stok
+        $peminjaman->barang->increment('stok');
+
+        return back()->with('success', 'Barang dikembalikan & Stok bertambah!');
     }
 
     public function edit(Peminjaman $peminjaman)
     {
-        // Pastikan hanya peminjaman yang sedang berjalan yang bisa diedit
-        if ($peminjaman->status != 'Dipinjam') {
-            return redirect()->route('peminjaman.index')->with('error', 'Hanya peminjaman yang sedang berjalan yang bisa diedit.');
+        if ($peminjaman->status_peminjaman != 'Dipinjam') {
+            return redirect()->route('peminjaman.index')->with('error', 'Hanya peminjaman aktif yang bisa diedit.');
         }
-
         return view('peminjaman.edit', compact('peminjaman'));
     }
 
@@ -119,15 +140,36 @@ class PeminjamanController extends Controller
         ]);
 
         $peminjaman->update([
-            'tanggal_wajib_kembali' => $request->tanggal_wajib_kembali,
+            'tanggal_kembali_rencana' => $request->tanggal_wajib_kembali, // MAPPING PENTING DISINI
         ]);
 
-        return redirect()->route('peminjaman.index')->with('success', 'Waktu peminjaman berhasil diperpanjang.');
+        return redirect()->route('peminjaman.index')->with('success', 'Waktu peminjaman diperpanjang.');
     }
 
-    // Fungsi-fungsi lain di bawah ini biarkan kosong
-    // public function edit(Peminjaman $peminjaman) {}
-    // public function update(Request $request, Peminjaman $peminjaman) {}
-    public function show(Peminjaman $peminjaman) {}
-    public function destroy(Peminjaman $peminjaman) {}
+    // --- FITUR BARU: PENGEMBALIAN CEPAT ---
+    public function indexPengembalianCepat()
+    {
+        return view('peminjaman.kembali_khusus', [
+            'karyawan' => null,
+            'peminjamans' => collect([])
+        ]);
+    }
+
+    public function cariByNik(Request $request)
+    {
+        $nik = $request->input('nik');
+        $karyawan = Karyawan::where('nik', $nik)->first();
+
+        if (!$karyawan) {
+            return redirect()->route('peminjaman.indexPengembalianCepat')
+                ->with('error', 'NIK tidak ditemukan.');
+        }
+
+        $peminjamans = Peminjaman::with('barang')
+            ->where('karyawan_id', $karyawan->id)
+            ->where('status_peminjaman', 'Dipinjam')
+            ->get();
+
+        return view('peminjaman.kembali_khusus', compact('karyawan', 'peminjamans'));
+    }
 }

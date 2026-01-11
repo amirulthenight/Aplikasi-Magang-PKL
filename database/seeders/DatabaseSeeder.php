@@ -12,14 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-        $this->call([
-            UserSeeder::class,
+        // User Kepala (Hanya bisa lihat laporan & edit profil)
+        \App\Models\User::create([
+            'name' => 'Bapak Kepala Divisi',
+            'email' => 'kepala@buma.test',
+            'password' => bcrypt('password'), // Password default
+            'role' => 'kepala', // Pastikan kolom role sudah ada di tabel users
         ]);
     }
 }

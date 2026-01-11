@@ -31,9 +31,9 @@
                             </div>
                             <div class="flex-shrink-0">
                                 <select name="status" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
-                                    <option value="" {{ request('status') == '' ? 'selected' : '' }}>Berjalan</option>
-                                    <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
-                                    <option value="Semua" {{ request('status') == 'Semua' ? 'selected' : '' }}>Semua</option>
+                                    <option value="berjalan" @selected(!request('status') || request('status')==='berjalan' )>Berjalan</option>
+                                    <option value="selesai" @selected(request('status')==='selesai' )>Selesai</option>
+                                    <option value="semua" @selected(request('status')==='semua' )>Semua</option>
                                 </select>
                             </div>
                             <div class="flex-shrink-0">
@@ -50,9 +50,9 @@
                                     <th class="px-6 py-3">Peminjam</th>
                                     <th class="px-6 py-3">Alasan Peminjam</th>
                                     <th class="px-6 py-3">Tgl/Waktu Pinjam</th>
-                                    <th class="px-6 py-3">Rencana Kembali</th>
+                                    <th class="px-6 py-3">Wajib Kembali</th>
                                     <th class="px-6 py-3">Kembali Aktual</th>
-                                    <th class="px-6 py-3">Status</th>
+                                    <!-- <th class="px-6 py-3">Status</th> -->
                                     <th class="px-6 py-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -60,19 +60,59 @@
                                 @forelse ($peminjamans as $peminjaman)
                                 <tr class="border-b dark:border-gray-700 {{ $peminjaman->is_overdue ? 'bg-red-50 dark:bg-red-900/20' : 'bg-white dark:bg-gray-800' }}">
                                     <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">{{ $peminjaman->barang->nama_barang }}</td>
-                                    <td class="px-6 py-4">{{ $peminjaman->karyawan->nama_karyawan }}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-800 dark:text-gray-200">
+                                            {{ $peminjaman->karyawan->nama_karyawan }}
+                                        </div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $peminjaman->karyawan->nik }}
+                                        </div>
+                                    </td>
                                     <td class="px-6 py-4">{{ $peminjaman->alasan_pinjam }}</td>
-                                    <td class="px-6 py-4">{{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d M Y, H:i') }}</td>
+
+                                    <td class="px-6 py-4">
+                                        {{ \Carbon\Carbon::parse($peminjaman->tanggal_pinjam)->format('d M Y, H:i') }}
+                                    </td>
                                     <td class="px-6 py-4 font-semibold {{ $peminjaman->is_overdue ? 'text-red-500' : '' }}">
                                         {{ \Carbon\Carbon::parse($peminjaman->tanggal_wajib_kembali)->format('d M Y, H:i') }}
                                     </td>
-                                    <td class="px-6 py-4">{{ $peminjaman->tanggal_kembali ? \Carbon\Carbon::parse($peminjaman->tanggal_kembali)->format('d M Y, H:i') : '-' }}</td>
                                     <td class="px-6 py-4">
-                                        <x-peminjaman-status-badge :peminjaman="$peminjaman" />
+                                        @if ($peminjaman->tanggal_kembali_aktual)
+                                        {{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali_aktual)->format('d M Y, H:i') }}
+                                        @else
+                                        -
+                                        @endif
                                     </td>
+                                    <!-- <td class="px-6 py-4">
+                                        @if ($peminjaman->status !== 'Selesai')
+                                        @if($peminjaman->is_overdue)
+                                        {{-- STATUS TERLAMBAT (MERAH) --}}
+                                        <span class="inline-flex items-center bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300 border border-red-400">
+                                            <span class="w-2 h-2 me-1 bg-red-500 rounded-full"></span>
+                                            Terlambat
+                                        </span>
+                                        @else
+                                        {{-- STATUS SEDANG DIPINJAM (KUNING/BIRU) --}}
+                                        <span class="inline-flex items-center bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300 border border-yellow-300">
+                                            <svg class="w-3 h-3 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                            Sedang Dipinjam
+                                        </span>
+                                        @endif
+                                        @else
+                                        {{-- STATUS SELESAI (HIJAU) --}}
+                                        <span class="inline-flex items-center bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300 border border-green-400">
+                                            <svg class="w-3 h-3 me-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Selesai
+                                        </span>
+                                        @endif
+                                    </td> -->
                                     <td class="px-6 py-4 text-right">
                                         <div class="flex items-center justify-end space-x-2">
-                                            @if ($peminjaman->status == 'Dipinjam')
+                                            @if ($peminjaman->status !== 'Selesai')
                                             <a href="{{ route('peminjaman.edit', $peminjaman->id) }}" class="p-1 text-green-500 hover:text-green-600 dark:hover:text-green-400" title="Edit / Perpanjang Waktu">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 19.5l-4.243 1.5 1.5-4.243L16.862 4.487z" />

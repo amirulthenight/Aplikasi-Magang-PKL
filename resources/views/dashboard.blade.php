@@ -76,7 +76,7 @@
                             </h4>
                             <a href="{{ route('laporan.terlambat') }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">Lihat Semua &rarr;</a>
                         </div>
-                        @if ($semuaPeminjamanTerlambat->isNotEmpty())
+                        @if ($peminjamanTerlambat->isNotEmpty())
                         <div class="overflow-y-auto border rounded-lg shadow-sm max-h-64 dark:border-gray-700">
                             <table class="w-full text-sm text-left text-gray-600 dark:text-gray-300">
                                 <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
@@ -88,7 +88,7 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y dark:bg-gray-800 dark:divide-gray-700">
-                                    @foreach($semuaPeminjamanTerlambat as $peminjaman)
+                                    @foreach($peminjamanTerlambat as $peminjaman)
                                     <tr class="transition-colors duration-200 even:bg-gray-50 dark:even:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-700/50">
                                         <td class="px-4 py-3">{{ $peminjaman->karyawan->nik }}</td>
                                         <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $peminjaman->karyawan->nama_karyawan }}</td>
@@ -114,45 +114,7 @@
                         @endif
                     </div>
 
-                    {{-- ---------------------------------------------------------------------- --}}
-                    {{-- | Tabel Aset Rusak                                                     | --}}
-                    {{-- ---------------------------------------------------------------------- --}}
-                    <div class="flex flex-col">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Aset Rusak</h4>
-                            <a href="{{ route('barang.index', ['status' => 'Rusak']) }}" class="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400">Lihat Semua &rarr;</a>
-                        </div>
-                        @if ($asetRusak->isNotEmpty())
-                        <div class="overflow-y-auto border rounded-lg shadow-sm max-h-64 dark:border-gray-700">
-                            <table class="w-full text-sm text-left text-gray-600 dark:text-gray-300">
-                                <thead class="sticky top-0 text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-300">
-                                    <tr>
-                                        <th class="px-4 py-3">Kode Barang</th>
-                                        <th class="px-4 py-3">Nama Barang</th>
-                                        <th class="px-4 py-3">Peminjam Terakhir</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y dark:bg-gray-800 dark:divide-gray-700">
-                                    @foreach($asetRusak as $barang)
-                                    <tr class="transition-colors duration-200 even:bg-gray-50 dark:even:bg-gray-900/50 hover:bg-gray-100 dark:hover:bg-gray-700/50">
-                                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $barang->kode_barang }}</td>
-                                        <td class="px-4 py-3">{{ $barang->nama_barang }}</td>
-                                        <td class="px-4 py-3">{{ $barang->peminjam_terakhir ?? '-' }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        @else
-                        <div class="flex flex-col items-center justify-center p-6 text-center border-2 border-dashed rounded-lg h-64 dark:border-gray-600">
-                            <svg class="w-12 h-12 text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <p class="mt-3 font-semibold text-gray-800 dark:text-gray-200">Luar Biasa!</p>
-                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Tidak ada aset yang dilaporkan rusak.</p>
-                        </div>
-                        @endif
-                    </div>
+
                 </div>
 
                 {{-- ====================================================================== --}}
@@ -225,31 +187,7 @@
                     </div>
                 </a>
 
-                {{-- Aset Rusak --}}
-                <a href="{{ route('barang.index', ['status' => 'Rusak']) }}" class="stat-card block transition-all duration-500 transform hover:-translate-y-1.5 group opacity-0 translate-y-4">
-                    <div class="flex items-center p-6 space-x-4 rounded-xl shadow-lg hover:shadow-xl h-full
-                        {{ $jumlahRusak > 0 ? 'bg-orange-50 dark:bg-orange-900/20 group-hover:ring-2 group-hover:ring-orange-300 dark:group-hover:ring-orange-600' : 'bg-white dark:bg-gray-800 group-hover:ring-2 group-hover:ring-gray-300 dark:group-hover:ring-gray-600' }}">
 
-                        <div class="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full
-                            {{ $jumlahRusak > 0 ? 'bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/50 dark:to-orange-800/60' : 'bg-gray-100 dark:bg-gray-700' }}">
-                            <svg class="w-6 h-6
-                                {{ $jumlahRusak > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500' }}"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.878-5.878m0 0a5.232 5.232 0 01-1.487-1.487l-2.047-2.047L4.5 12.75l2.047 2.047a5.232 5.232 0 011.487 1.487M12 10.5h.008v.008H12v-.008z" />
-                            </svg>
-                        </div>
-
-                        <div>
-                            <p class="text-sm font-semibold
-                                {{ $jumlahRusak > 0 ? 'text-orange-700 dark:text-orange-300' : 'text-gray-500 dark:text-gray-400' }}">
-                                Aset Rusak
-                            </p>
-                            <p class="text-2xl font-bold {{ $jumlahRusak > 0 ? 'text-orange-800 dark:text-orange-200' : 'text-gray-800 dark:text-gray-200' }}">
-                                {{ $jumlahRusak }}
-                            </p>
-                        </div>
-                    </div>
-                </a>
 
                 {{-- Terlambat --}}
                 <a href="{{ route('laporan.terlambat') }}" class="stat-card block transition-all duration-500 transform hover:-translate-y-1.5 group opacity-0 translate-y-4">

@@ -17,6 +17,12 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            // Tambahan untuk role (admin / kepala_divisi)
+            $table->enum('role', ['admin', 'kepala_divisi'])->default('admin');
+
+            // Tambahan field lain sesuai request (no_hp) jika belum ada
+            $table->string('no_hp')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
         });

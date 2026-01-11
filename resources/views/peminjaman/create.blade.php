@@ -29,7 +29,7 @@
                         {{-- Pilih Karyawan --}}
                         <div class="mt-4">
                             <x-input-label for="karyawan_id" :value="__('Pilih Karyawan Peminjam')" />
-                            <select name="karyawan_id" id="karyawan_id" class="block mt-1 w-full select2-search" required>
+                            <select name="karyawan_id" id="karyawan_id" class="block mt-1 w-full select2-search">
                                 <option></option>
                                 @foreach ($karyawans as $karyawan)
                                 <option value="{{ $karyawan->id }}" @if(old('karyawan_id')==$karyawan->id) selected @endif>
@@ -42,11 +42,11 @@
                         {{-- Pilih Barang --}}
                         <div class="mt-4">
                             <x-input-label for="barang_id" :value="__('Pilih Barang (Hanya yang Tersedia)')" />
-                            <select name="barang_id" id="barang_id" class="block mt-1 w-full select2-search" required>
+                            <select name="barang_id" id="barang_id" class="block mt-1 w-full select2-search">
                                 <option></option>
-                                @foreach ($barangs as $barang)
+                                @foreach($barangs as $barang)
                                 <option value="{{ $barang->id }}" @if(old('barang_id')==$barang->id) selected @endif>
-                                    {{ $barang->nama_barang }} ({{ $barang->kode_barang }})
+                                    {{ $barang->nama_barang }} (Sisa Stok: {{ $barang->stok }})
                                 </option>
                                 @endforeach
                             </select>
@@ -58,13 +58,13 @@
                             <div>
                                 <x-input-label for="tanggal_pinjam" :value="__('Waktu Pinjam')" />
                                 {{-- PERUBAHAN DI SINI: type="datetime-local" --}}
-                                <x-text-input id="tanggal_pinjam" class="block mt-1 w-full" type="datetime-local" name="tanggal_pinjam" :value="old('tanggal_pinjam', now()->format('Y-m-d\TH:i'))" required />
+                                <x-text-input id="tanggal_pinjam" class="block mt-1 w-full" type="datetime-local" name="tanggal_pinjam" :value="old('tanggal_pinjam', now()->format('Y-m-d\TH:i'))" />
                                 <x-input-error :messages="$errors->get('tanggal_pinjam')" class="mt-2" />
                             </div>
                             <div>
                                 <x-input-label for="tanggal_wajib_kembali" :value="__('Rencana Kembali')" />
                                 {{-- PERUBAHAN DI SINI: type="datetime-local" --}}
-                                <x-text-input id="tanggal_wajib_kembali" class="block mt-1 w-full" type="datetime-local" name="tanggal_wajib_kembali" :value="old('tanggal_wajib_kembali')" required />
+                                <x-text-input id="tanggal_wajib_kembali" class="block mt-1 w-full" type="datetime-local" name="tanggal_wajib_kembali" :value="old('tanggal_wajib_kembali')" />
                                 <x-input-error :messages="$errors->get('tanggal_wajib_kembali')" class="mt-2" />
                             </div>
                         </div>
@@ -97,11 +97,6 @@
     </script>
     @endpush
 
-    <style>
-        .dark .flatpickr-input {
-            background-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cg%3E%3C/g%3E%3Cpath d='M14 2V1h-1v1H4V1H3v1H0v15h17V2h-3zm.5 13.5h-14v-12h2v1h1V3h8v1h1V3h2v12z' fill='%239CA3AF'/%3E%3C/svg%3E") !important;
-        }
-    </style>
     <style>
         .dark .flatpickr-input {
             background-image: url("data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 17 17'%3E%3Cg%3E%3C/g%3E%3Cpath d='M14 2V1h-1v1H4V1H3v1H0v15h17V2h-3zm.5 13.5h-14v-12h2v1h1V3h8v1h1V3h2v12z' fill='%239CA3AF'/%3E%3C/svg%3E") !important;

@@ -14,13 +14,13 @@ class Peminjaman extends Model
     protected $table = 'peminjamans';
     // app/Models/Peminjaman.php
     protected $fillable = [
-        'barang_id',
         'karyawan_id',
+        'barang_id',
         'tanggal_pinjam',
-        'tanggal_wajib_kembali', // <-- TAMBAHKAN INI
-        'tanggal_kembali',
-        'status',
-        'alasan_pinjam', // <-- TAMBAHKAN INI
+        'tanggal_kembali_rencana', // Wajib ada
+        'tanggal_kembali_aktual',
+        'status_peminjaman',
+        'alasan_pinjam',           // Wajib ada
     ];
 
     public function getDurasiTelatAttribute(): ?string

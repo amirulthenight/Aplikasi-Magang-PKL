@@ -11,13 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Pastikan isinya kurang lebih begini:
         Schema::create('peminjamans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('barang_id')->constrained()->onDelete('cascade');
-            $table->foreignId('karyawan_id')->constrained()->onDelete('cascade');
-            $table->date('tanggal_pinjam');
-            $table->date('tanggal_kembali')->nullable();
-            $table->enum('status', ['Dipinjam', 'Selesai'])->default('Dipinjam');
+            $table->foreignId('karyawan_id')->constrained('karyawans')->onDelete('cascade');
+            $table->foreignId('barang_id')->constrained('barangs')->onDelete('cascade');
+
+            // Kita pakai dateTime agar mencatat Jam juga, bukan cuma Tanggal
+            $table->dateTime('tanggal_pinjam');
+            $table->dateTime('tanggal_kembali_rencana');
+            $table->dateTime('tanggal_kembali_aktual')->nullable();
+
+            $table->string('status_peminjaman')->default('Dipinjam');
             $table->timestamps();
         });
     }

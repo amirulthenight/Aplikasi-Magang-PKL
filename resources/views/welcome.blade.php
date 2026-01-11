@@ -67,7 +67,7 @@
                 <div class="mt-8">
                     <a href="{{ route('login') }}"
                         class="inline-flex items-center px-8 py-3 bg-blue-600 border border-transparent rounded-md font-semibold text-lg text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-lg hover:shadow-xl transform hover:-translate-y-1.5 transition-all duration-300">
-                        Login Admin
+                        Login
                     </a>
                 </div>
             </div>

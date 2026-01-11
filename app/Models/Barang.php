@@ -18,11 +18,17 @@ class Barang extends Model
     protected $fillable = [
         'kode_barang',
         'nama_barang',
-        'serial_number',
-        'status',
-        'site',
-        'keterangan',
+        'kategori',
+        'merk',
+        'stok', // Ganti site/rusak jadi stok
     ];
+
+    // Accessor: Untuk mendapatkan status secara otomatis
+    // Cara panggil di view: {{ $barang->status_barang }}
+    public function getStatusBarangAttribute()
+    {
+        return $this->stok > 0 ? 'Tersedia' : 'Tidak Tersedia';
+    }
 
     public function peminjamans()
     {

@@ -13,51 +13,46 @@ use Maatwebsite\Excel\Validators\ValidationException; // Tambahkan ini
 class BarangController extends Controller
 {
 
+    // Menampilkan daftar barang
     public function index(Request $request)
     {
+        // Fitur Filter Kategori (Biar dosen senang pas nanya "Monitor ada berapa?")
         $query = Barang::query();
-
-        // Logika Pencarian
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_barang', 'like', "%{$search}%")
-                    ->orWhere('kode_barang', 'like', "%{$search}%");
-            });
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori', $request->kategori);
         }
 
-        // Logika Filter Status
-        if ($request->filled('status')) {
-            $query->where('status', $request->input('status'));
-        }
-
-        $barangs = $query->latest()->paginate(10)->withQueryString();
+        $barangs = $query->latest()->get();
         return view('barang.index', compact('barangs'));
     }
 
     /**
      * Show the form for creating a new resource.
      */
+    // Menampilkan form tambah barang
     public function create()
     {
-        // Cukup tampilkan view formulir
         return view('barang.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
+    // Menyimpan barang baru ke database
     public function store(Request $request)
     {
-        $request->validate([
-            'kode_barang' => 'required|string|max:255|unique:barangs',
-            'nama_barang' => 'required|string|max:255',
-            'serial_number' => 'nullable|string|max:255',
-            'site' => 'nullable|string|max:255',
-            'keterangan' => 'nullable|string',
+        $validatedData = $request->validate([
+            'kode_barang' => 'required|unique:barangs',
+            'nama_barang' => 'required',
+            'kategori'    => 'required',
+            'merk'        => 'nullable',
+            'stok'        => 'required|integer|min:0',
+            'keterangan'  => 'nullable|string', // Kolom Keterangan Masuk Sini
         ]);
-        Barang::create($request->all());
-        return redirect()->route('barang.index')->with('success', 'Barang baru berhasil ditambahkan.');
+
+        Barang::create($validatedData);
+
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan!');
     }
 
     /**
@@ -82,8 +77,7 @@ class BarangController extends Controller
      */
     public function edit(Barang $barang)
     {
-        // Tampilkan view edit dan kirim data barang yang mau diedit
-        return view('barang.edit', compact('barang'));
+        return view('barangs.edit', compact('barang'));
     }
 
     /**
@@ -91,16 +85,18 @@ class BarangController extends Controller
      */
     public function update(Request $request, Barang $barang)
     {
-        $request->validate([
-            'kode_barang' => 'required|string|max:255|unique:barangs,kode_barang,' . $barang->id,
-            'nama_barang' => 'required|string|max:255',
-            'serial_number' => 'nullable|string|max:255',
-            'site' => 'nullable|string|max:255',
-            'status' => 'required|in:Tersedia,Dipinjam,Rusak',
-            'keterangan' => 'nullable|string',
+        $validatedData = $request->validate([
+            'kode_barang' => 'required|unique:barangs,kode_barang,' . $barang->id,
+            'nama_barang' => 'required',
+            'kategori'    => 'required',
+            'merk'        => 'nullable',
+            'stok'        => 'required|integer|min:0',
+            'keterangan'  => 'nullable|string', // Update Keterangan
         ]);
-        $barang->update($request->all());
-        return redirect()->route('barang.index')->with('success', 'Data barang berhasil diperbarui.');
+
+        $barang->update($validatedData);
+
+        return redirect()->route('barangs.index')->with('success', 'Data barang diperbarui!');
     }
 
     /**
@@ -108,14 +104,8 @@ class BarangController extends Controller
      */
     public function destroy(Barang $barang)
     {
-        // Cek apakah barang memiliki riwayat peminjaman
-        if ($barang->peminjamans()->exists()) {
-            return redirect()->route('barang.index')
-                ->with('error', 'Gagal! Barang tidak bisa dihapus karena memiliki riwayat peminjaman.');
-        }
-
         $barang->delete();
-        return redirect()->route('barang.index')->with('success', 'Data barang berhasil dihapus.');
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus!');
     }
 
     public function cetakPdf(Request $request)

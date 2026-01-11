@@ -26,7 +26,7 @@
 
                         <div class="mb-6">
                             <label for="tanggal_wajib_kembali" class="block font-medium text-sm text-gray-700 dark:text-gray-300">Rencana Kembali (Baru)</label>
-                            <x-text-input type="datetime-local" id="tanggal_wajib_kembali" name="tanggal_wajib_kembali" value="{{ \Carbon\Carbon::parse($peminjaman->tanggal_wajib_kembali)->format('Y-m-d\TH:i') }}" class="block mt-1 w-full" required />
+                            <x-text-input type="datetime-local" id="tanggal_wajib_kembali" name="tanggal_wajib_kembali" value="{{ \Carbon\Carbon::parse($peminjaman->tanggal_kembali_rencana)->format('Y-m-d\TH:i') }}" class="block mt-1 w-full" required />
                             @error('tanggal_wajib_kembali')
                             <p class="text-sm text-red-600 dark:text-red-400 mt-2">{{ $message }}</p>
                             @enderror

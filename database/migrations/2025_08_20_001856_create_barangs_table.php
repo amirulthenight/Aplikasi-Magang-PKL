@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('barangs', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_barang')->unique();
-            $table->string('nama_barang');
-            $table->string('serial_number')->nullable();
-            $table->enum('status', ['Tersedia', 'Dipinjam', 'Rusak'])->default('Tersedia');
+            $table->string('kode_barang')->unique(); // LP-001
+            $table->string('nama_barang');           // Laptop Thinkpad
+            $table->string('kategori');              // Laptop/Monitor (Buat hitung jenis)
+            $table->string('merk')->nullable();      // Lenovo/Dell
+            $table->integer('stok')->default(0);     // Stok: 10
+            $table->text('keterangan')->nullable();  // Keterangan (Sesuai Video)
             $table->timestamps();
         });
     }
