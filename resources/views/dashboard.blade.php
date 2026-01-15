@@ -357,7 +357,7 @@
                         </div>
                         @endif
 
-                        <div class="flex-1">
+                        <!-- <div class="flex-1">
                             <p class="text-gray-800 dark:text-gray-200">
                                 {{-- ========================================================== --}}
                                 {{-- || DESKRIPSI BARU YANG LEBIH PINTAR                           || --}}
@@ -374,7 +374,36 @@
                                 {{-- TANGGAL UPDATE AKAN SELALU AKURAT --}}
                                 {{ $aktivitas->updated_at->diffForHumans() }}
                             </p>
+                        </div> -->
+
+                        <div class="flex-1">
+                            <p class="text-gray-800 dark:text-gray-200 text-sm">
+                                {{-- LABEL ADMIN --}}
+                                <span class="font-bold text-blue-600 dark:text-blue-400">Admin</span>
+
+                                @if ($aktivitas->status == 'Selesai')
+                                    {{-- KEMBALI --}}
+                                    Telah menerima kembali <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
+                                    dari <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
+
+                                @elseif ($aktivitas->updated_at->gt($aktivitas->created_at->addSeconds(5)))
+                                    {{-- PERPANJANG --}}
+                                    Telah memperpanjang peminjaman <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
+                                    atas nama <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
+
+                                @else
+                                    {{-- PINJAM --}}
+                                    Telah menyerahkan <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
+                                    kepada <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
+                                @endif
+                            </p>
+                            
+                            {{-- WAKTU --}}
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {{ $aktivitas->updated_at->diffForHumans() }}
+                            </p>
                         </div>
+
                     </div>
                     @empty
                     <div class="text-center py-8">

@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Mail;
 
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -39,6 +40,8 @@ Route::middleware('auth')->group(function () {
     // ==========================================================
     Route::middleware('isAdmin')->group(function () {
 
+
+
         // --- BARANG ---
         Route::get('barang/pdf', [BarangController::class, 'cetakPdf'])->name('barang.pdf');
         Route::get('barang/excel', [BarangController::class, 'cetakExcel'])->name('barang.excel');
@@ -60,6 +63,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengembalian-cepat/cari', [PeminjamanController::class, 'cariByNik'])->name('peminjaman.cariByNik');
         Route::patch('peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
         Route::resource('peminjaman', PeminjamanController::class); // Resource sudah mencakup index, create, store, edit, update, destroy
+
+        // --- USER/PENGGUNA ---
+        Route::resource('users', \App\Http\Controllers\UserController::class);
 
         // --- EMAIL & LAINNYA ---
         Route::post('laporan/kirim-pengingat-terlambat', [LaporanController::class, 'kirimPengingatTerlambat'])->name('laporan.kirimPengingat');

@@ -58,6 +58,14 @@
             </x-responsive-nav-link>
             @endif
 
+          {{-- KHUSUS ADMIN: MANAGEMEN PENGGUNA --}}
+            @if(Auth::user()->role === 'admin')
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Data Pengguna') }}
+            </x-responsive-nav-link>
+            @endif
+
+
             {{-- LAPORAN (ADMIN & KEPALA) --}}
             @if(Auth::user()->role === 'admin' || Auth::user()->role === 'kepala')
             <x-responsive-nav-link :href="route('laporan.index')" :active="request()->routeIs('laporan.*')">

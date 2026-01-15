@@ -119,7 +119,7 @@
                                                 </svg>
                                             </a>
 
-                                            <form action="{{ route('peminjaman.kembalikan', $peminjaman->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin mengembalikan barang ini?');">
+                                            <!-- <form action="{{ route('peminjaman.kembalikan', $peminjaman->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin mengembalikan barang ini?');">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="p-1 text-blue-500 hover:text-blue-600 dark:hover:text-blue-400" title="Kembalikan Barang">
@@ -127,7 +127,7 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
                                                     </svg>
                                                 </button>
-                                            </form>
+                                            </form> -->
                                             @else
                                             <span class="text-xs text-gray-400 dark:text-gray-500">-</span>
                                             @endif
