@@ -10,145 +10,111 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the dashboard with key metrics and recent activities.
-     */
-
-    public function index()
+    public function index(Request $request)
     {
-        // 1. STATISTIK DASAR
-        $totalAset = Barang::count();
-        $stokTersedia = Barang::sum('stok'); // Menjumlahkan semua stok
+        // ==========================================================
+        // 1. PERBAIKAN LOGIKA STATISTIK (Supaya Total Aset Benar)
+        // ==========================================================
+
+        // Stok Tersedia = Jumlah barang yang nyata ada di lemari saat ini
+        $stokTersedia = Barang::sum('stok');
+
+        // Sedang Dipinjam = Jumlah transaksi yang statusnya masih 'Dipinjam'
         $sedangDipinjam = Peminjaman::where('status_peminjaman', 'Dipinjam')->count();
 
-        // 2. HITUNG PERSENTASE KETERSEDIAAN (Untuk Bar Grafik)
-        $totalUnit = $stokTersedia + $sedangDipinjam;
-        $availablePercentage = $totalUnit > 0 ? round(($stokTersedia / $totalUnit) * 100) : 0;
+        // Total Aset = Stok di Lemari + Stok yang dibawa Orang
+        // INI PERBAIKANNYA: Dijumlahkan agar Total Aset masuk akal
+        $totalAset = $stokTersedia + $sedangDipinjam;
 
-        // 3. DATA PEMINJAMAN TERLAMBAT (Rename variable agar cocok dengan View)
-        $peminjamanTerlambat = Peminjaman::with(['barang', 'karyawan'])
-            ->where('status_peminjaman', 'Dipinjam')
-            ->where('tanggal_kembali_rencana', '<', now())
+        // Persentase
+        $availablePercentage = $totalAset > 0 ? round(($stokTersedia / $totalAset) * 100) : 0;
+
+        // Hitung Terlambat
+        $terlambatKembali = Peminjaman::where('status_peminjaman', 'Dipinjam')
+            ->where('tanggal_kembali_rencana', '<', now()) // Pastikan nama kolom ini benar di DB kamu
+            ->count();
+
+        // ==========================================================
+        // 2. GRAFIK TOP 5 BARANG + FILTER TANGGAL (GABUNGAN)
+        // ==========================================================
+
+        // Default: 1 Bulan terakhir jika tidak ada filter
+        $startDate = now()->subDays(29)->startOfDay();
+        $endDate = now()->endOfDay();
+
+        // Cek Filter Tanggal dari Form
+        if ($request->filled('tanggal')) {
+            $dates = explode(' to ', $request->input('tanggal'));
+            if (count($dates) == 2) {
+                $startDate = Carbon::parse($dates[0])->startOfDay();
+                $endDate = Carbon::parse($dates[1])->endOfDay();
+            } elseif (count($dates) == 1) {
+                $startDate = Carbon::parse($dates[0])->startOfDay();
+                $endDate = Carbon::parse($dates[0])->endOfDay();
+            }
+        }
+
+        // Query: Cari 5 barang paling laku DALAM RENTANG TANGGAL TERSEBUT
+        $populerData = Peminjaman::select('barang_id', DB::raw('count(*) as total'))
+            ->whereBetween('tanggal_pinjam', [$startDate, $endDate]) // Filter Waktu
+            ->groupBy('barang_id')
+            ->orderByDesc('total')
+            ->take(5)
+            ->with('barang')
             ->get();
 
-        // Hitung durasi telat untuk tampilan
-        foreach ($peminjamanTerlambat as $p) {
-            $p->durasi_telat = Carbon::parse($p->tanggal_kembali_rencana)->diffForHumans();
+        $labels = [];
+        $data = [];
+
+        foreach ($populerData as $item) {
+            $labels[] = $item->barang->nama_barang ?? 'Barang Dihapus';
+            $data[] = $item->total;
         }
 
-        $terlambatKembali = $peminjamanTerlambat->count();
-
-        // Variabel Modal Peringatan
-        $showPeringatanModal = $terlambatKembali > 0;
-
-        // 4. DATA GRAFIK (7 Hari Terakhir)
-        $chartLabels = [];
-        $chartValues = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $chartLabels[] = $date->format('d M'); // Label Tgl
-            // Hitung peminjaman pada tanggal tersebut
-            $chartValues[] = Peminjaman::whereDate('created_at', $date->format('Y-m-d'))->count();
+        if (empty($labels)) {
+            $labels = ['Tidak ada data'];
+            $data = [0];
         }
+
         $chartData = [
-            'labels' => $chartLabels,
-            'data' => $chartValues
+            'labels' => $labels,
+            'data' => $data,
         ];
 
-        // 5. AKTIVITAS TERKINI (5 Transaksi Terakhir)
-        $aktivitasTerkini = Peminjaman::with(['barang', 'karyawan'])
-            ->latest()
+        // ==========================================================
+        // 3. DATA PENDUKUNG (SIDEBAR & AKTIVITAS)
+        // ==========================================================
+
+        // Tabel Sidebar Kanan (Peminjaman Terlambat)
+        $peminjamanTerlambat = Peminjaman::with(['karyawan', 'barang'])
+            ->where('status_peminjaman', 'Dipinjam')
+            ->where('tanggal_kembali_rencana', '<', now())
+            ->orderBy('tanggal_kembali_rencana', 'asc')
+            ->take(5)
+            ->get()
+            ->map(function ($item) {
+                $item->durasi_telat = Carbon::parse($item->tanggal_kembali_rencana)->diffForHumans(null, true) . ' overdue';
+                return $item;
+            });
+
+        // Tabel Bawah (Aktivitas Admin)
+        $aktivitasTerkini = Peminjaman::with(['karyawan', 'barang'])
+            ->latest('updated_at')
             ->take(5)
             ->get();
 
-        // Penyesuaian status untuk view
-        foreach ($aktivitasTerkini as $aktivitas) {
-            $aktivitas->status = ($aktivitas->status_peminjaman == 'Kembali') ? 'Selesai' : 'Dipinjam';
-        }
+        $showPeringatanModal = $terlambatKembali > 2;
 
-        // Kirim semua ke View
         return view('dashboard', compact(
             'totalAset',
             'stokTersedia',
             'sedangDipinjam',
-            'availablePercentage',
             'terlambatKembali',
-            'peminjamanTerlambat', // View minta variable ini
-            'showPeringatanModal',
+            'availablePercentage',
             'chartData',
-            'aktivitasTerkini'
+            'peminjamanTerlambat',
+            'aktivitasTerkini',
+            'showPeringatanModal'
         ));
     }
-
-    // app/Http/Controllers/DashboardController.php
-
-    // public function index(Request $request)
-    // {
-    //     // ==========================================================
-    //     // BAGIAN 1: AMBIL SEMUA DATA MENTAH DARI DATABASE
-    //     // ==========================================================
-    //     $totalAset = Barang::count();
-    //     $stokTersedia = Barang::where('status', 'Tersedia')->count();
-    //     $sedangDipinjam = Peminjaman::where('status', 'Dipinjam')->count();
-
-    //     // Ambil data untuk MODAL (termasuk Peminjam Terakhir)
-    //     $asetRusak = Barang::where('status', 'Rusak')
-    //         ->addSelect([
-    //             'peminjam_terakhir' => Peminjaman::select('karyawans.nama_karyawan')
-    //                 ->join('karyawans', 'peminjamans.karyawan_id', '=', 'karyawans.id')
-    //                 ->whereColumn('peminjamans.barang_id', 'barangs.id')
-    //                 ->latest('peminjamans.created_at')->limit(1)
-    //         ])->get();
-
-    //     // Ambil SEMUA peminjaman terlambat SEKALI SAJA
-    //     $semuaPeminjamanTerlambat = Peminjaman::with(['barang', 'karyawan'])
-    //         ->where('status', 'Dipinjam')
-    //         ->where('tanggal_wajib_kembali', '<', now())
-    //         ->orderBy('tanggal_wajib_kembali', 'asc')->get();
-
-    //     $aktivitasTerkini = Peminjaman::with(['barang', 'karyawan'])->orderBy('updated_at', 'desc')->take(5)->get();
-
-    //     // ==========================================================
-    //     // BAGIAN 2: HITUNG STATISTIK DARI DATA YANG SUDAH ADA
-    //     // ==========================================================
-    //     $jumlahRusak = $asetRusak->count();
-    //     $terlambatKembali = $semuaPeminjamanTerlambat->count();
-    //     $availablePercentage = ($totalAset > 0) ? round(($stokTersedia / $totalAset) * 100) : 0;
-    //     $showPeringatanModal = $asetRusak->isNotEmpty() || $semuaPeminjamanTerlambat->isNotEmpty();
-
-    //     // Ambil 5 data teratas untuk panel samping dari data yang sudah kita ambil
-    //     $peminjamanTerlambat = $semuaPeminjamanTerlambat->take(5);
-
-    //     // ==========================================================
-    //     // BAGIAN 3: SIAPKAN DATA UNTUK GRAFIK INTERAKTIF
-    //     // ==========================================================
-    //     $queryGrafik = Peminjaman::join('barangs', 'peminjamans.barang_id', '=', 'barangs.id');
-    //     if ($request->filled('tanggal')) {
-    //         $rentangTanggal = explode(' to ', $request->tanggal);
-    //         $tanggalMulai = $rentangTanggal[0];
-    //         $tanggalSelesai = $rentangTanggal[1] ?? $tanggalMulai;
-    //         $queryGrafik->whereBetween('peminjamans.created_at', [$tanggalMulai, $tanggalSelesai . ' 23:59:59']);
-    //     }
-    //     $chartData = $queryGrafik->select('barangs.nama_barang', DB::raw('count(peminjamans.barang_id) as total'))
-    //         ->groupBy('barangs.nama_barang')->orderBy('total', 'desc')->take(5)->get()
-    //         ->pipe(fn($data) => ['labels' => $data->pluck('nama_barang'), 'data' => $data->pluck('total')]);
-
-    //     // ==========================================================
-    //     // BAGIAN 4: KIRIM SEMUA DATA YANG SUDAH RAPI KE VIEW
-    //     // ==========================================================
-    //     return view('dashboard', compact(
-    //         'totalAset',
-    //         'stokTersedia',
-    //         'sedangDipinjam',
-    //         'jumlahRusak',
-    //         'terlambatKembali',
-    //         'availablePercentage',
-    //         'chartData',
-    //         'aktivitasTerkini',
-    //         'asetRusak',
-    //         'semuaPeminjamanTerlambat',
-    //         'showPeringatanModal',
-    //         'peminjamanTerlambat'
-    //     ));
-    // }
 }

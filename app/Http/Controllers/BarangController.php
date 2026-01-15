@@ -77,7 +77,7 @@ class BarangController extends Controller
      */
     public function edit(Barang $barang)
     {
-        return view('barangs.edit', compact('barang'));
+        return view('barang.edit', compact('barang'));
     }
 
     /**
@@ -96,7 +96,7 @@ class BarangController extends Controller
 
         $barang->update($validatedData);
 
-        return redirect()->route('barangs.index')->with('success', 'Data barang diperbarui!');
+        return redirect()->route('barang.index')->with('success', 'Data barang diperbarui!');
     }
 
     /**
@@ -105,7 +105,7 @@ class BarangController extends Controller
     public function destroy(Barang $barang)
     {
         $barang->delete();
-        return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus!');
+        return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus!');
     }
 
     public function cetakPdf(Request $request)

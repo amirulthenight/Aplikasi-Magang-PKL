@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
 
-                    <form action="{{ route('barangs.update', $barang->id) }}" method="POST">
+                    <form action="{{ route('barang.update', $barang->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -49,7 +49,7 @@
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                 Update Data
                             </button>
-                            <a href="{{ route('barangs.index') }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                            <a href="{{ route('barang.index') }}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
                                 Batal
                             </a>
                         </div>

@@ -268,7 +268,53 @@
 
             {{-- Main Grid (Chart & Peminjaman Terlambat) --}}
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-5">
-                {{-- Kolom Kiri: Chart --}}
+
+                {{-- Kolom Kiri: Grafik Barang Terpopuler dengan Filter --}}
+                <div class="p-6 bg-white rounded-xl shadow-lg lg:col-span-3 dark:bg-gray-800">
+                    <div class="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Top 5 Aset Paling Sering Dipinjam</h3>
+                            <p class="text-xs text-gray-500">Filter tanggal untuk melihat tren pemakaian</p>
+                        </div>
+
+                        {{-- FORM FILTER TANGGAL (TETAP ADA) --}}
+                        <form action="{{ route('dashboard') }}" method="GET" class="flex items-center gap-2">
+                            <div class="relative"
+                                x-data="{
+                                    dateRange: '{{ request('tanggal', now()->subDays(29)->format('Y-m-d') . ' to ' . now()->format('Y-m-d')) }}',
+                                    init() {
+                                        flatpickr(this.$refs.picker, {
+                                            mode: 'range',
+                                            dateFormat: 'Y-m-d',
+                                            defaultDate: this.dateRange.split(' to '),
+                                            maxDate: 'today',
+                                            onChange: (selectedDates, dateStr) => {
+                                                this.dateRange = dateStr;
+                                            }
+                                        });
+                                    }
+                                }">
+                                <input x-ref="picker" type="text" name="tanggal"
+                                    class="w-56 text-sm text-center bg-gray-50 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                    placeholder="Pilih Rentang Tanggal"
+                                    x-model="dateRange">
+                            </div>
+                            <button type="submit" class="p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition shadow-sm" title="Terapkan Filter">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+
+                    {{-- CANVAS GRAFIK --}}
+                    <div class="h-80 relative w-full">
+                        <canvas id="topBarangChart" data-chart='{{ json_encode($chartData) }}'></canvas>
+                    </div>
+                </div>
+
+                <!-- yang lama ini -->
+                <!-- {{-- Kolom Kiri: Chart --}}
                 <div class="p-6 bg-white rounded-xl shadow-lg lg:col-span-3 dark:bg-gray-800">
                     <div class="flex flex-col items-start justify-between gap-4 mb-6 sm:flex-row sm:items-center">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Tren Peminjaman Barang</h3>
@@ -297,7 +343,7 @@
                     <div class="h-80">
                         <canvas id="barangPopulerChart" data-chart-data='{{ json_encode($chartData) }}'></canvas>
                     </div>
-                </div>
+                </div> -->
 
                 {{-- Kolom Kanan: Peminjaman Terlambat --}}
                 <div class="flex flex-col p-6 bg-white rounded-xl shadow-lg lg:col-span-2 dark:bg-gray-800">
@@ -382,22 +428,22 @@
                                 <span class="font-bold text-blue-600 dark:text-blue-400">Admin</span>
 
                                 @if ($aktivitas->status == 'Selesai')
-                                    {{-- KEMBALI --}}
-                                    Telah menerima kembali <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
-                                    dari <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
+                                {{-- KEMBALI --}}
+                                Telah menerima kembali <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
+                                dari <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
 
                                 @elseif ($aktivitas->updated_at->gt($aktivitas->created_at->addSeconds(5)))
-                                    {{-- PERPANJANG --}}
-                                    Telah memperpanjang peminjaman <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
-                                    atas nama <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
+                                {{-- PERPANJANG --}}
+                                Telah memperpanjang peminjaman <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
+                                atas nama <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
 
                                 @else
-                                    {{-- PINJAM --}}
-                                    Telah menyerahkan <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
-                                    kepada <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
+                                {{-- PINJAM --}}
+                                Telah menyerahkan <span class="font-semibold text-gray-900 dark:text-white">{{ $aktivitas->barang->nama_barang }}</span>
+                                kepada <span class="font-bold">{{ $aktivitas->karyawan->nama_karyawan }}</span>.
                                 @endif
                             </p>
-                            
+
                             {{-- WAKTU --}}
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                 {{ $aktivitas->updated_at->diffForHumans() }}
@@ -421,7 +467,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
     <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
+
+    <!-- ini yg lama -->
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const chartCanvas = document.getElementById('barangPopulerChart');
             if (chartCanvas) {
@@ -481,5 +529,67 @@
                 });
             }
         });
+    </script> -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup Chart Top Barang (Batang)
+            const ctx = document.getElementById('topBarangChart');
+
+            if (ctx) {
+                const chartData = JSON.parse(ctx.dataset.chart);
+                const isDark = document.documentElement.classList.contains('dark');
+
+                new Chart(ctx, {
+                    type: 'bar', // Tipe BATANG
+                    data: {
+                        labels: chartData.labels,
+                        datasets: [{
+                            label: 'Jumlah Peminjaman',
+                            data: chartData.data,
+                            backgroundColor: 'rgba(59, 130, 246, 0.8)', // Warna Biru
+                            borderColor: '#3B82F6',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            barPercentage: 0.5,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1,
+                                    color: isDark ? '#9CA3AF' : '#4B5563'
+                                },
+                                grid: {
+                                    color: isDark ? '#374151' : '#E5E7EB'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: isDark ? '#9CA3AF' : '#4B5563'
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
     </script>
+
 </x-app-layout>
