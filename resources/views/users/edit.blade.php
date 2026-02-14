@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                
+
                 {{-- Form mengarah ke route update dengan ID user --}}
                 <form action="{{ route('users.update', $user->id) }}" method="POST">
                     @csrf
@@ -31,7 +31,7 @@
                             {{-- Logika: Jika role user sama dengan value, maka tambahkan attribute 'selected' --}}
                             <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
                             <!-- <option value="pimpinan" {{ old('role', $user->role) == 'pimpinan' ? 'selected' : '' }}>Pimpinan</option> -->
-                            <option value="kepala" {{ old('role', $user->role) == 'kepala' ? 'selected' : '' }}>Kepala</option>
+                            <option value="kepala" {{ old('role', $user->role) == 'kepala' ? 'selected' : '' }}>Pimpinan</option>
                         </select>
                     </div>
 

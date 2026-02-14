@@ -23,10 +23,10 @@
                     </div>
 
                     <div class="mb-4">
-                        <x-input-label for="role" value="Role (Jabatan)" />
+                        <x-input-label for="role" value="Role" />
                         <select name="role" id="role" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block mt-1 w-full">
                             <option value="admin">Admin</option>
-                            <option value="kepala">Kepala</option>
+                            <option value="Pimpinan">Pimpinan</option>
                         </select>
                     </div>
 

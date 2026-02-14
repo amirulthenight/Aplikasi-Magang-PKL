@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -28,7 +29,7 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'role' => ['required', 'string'], // Admin/Pimpinan/Kepala
+            'role' => ['required', 'string', Rule::in(['admin', 'kepala', 'pimpinan'])],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -56,8 +57,8 @@ class UserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             // Email harus unik, tapi kecualikan (ignore) email milik user yang sedang diedit ini
-            'email' => ['required', 'email', 'unique:users,email,'.$user->id],
-            'role' => ['required', 'string'],
+            'email' => ['required', 'email', 'unique:users,email,' . $user->id],
+            'role' => ['required', 'string', Rule::in(['admin', 'kepala', 'pimpinan'])],
         ]);
 
         $data = [

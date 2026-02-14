@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Manajemen Pengguna') }}
+            {{ __('Pengelolaan Pengguna') }}
         </h2>
     </x-slot>
 
@@ -22,7 +22,7 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th class="px-6 py-3">Nama</th>
-                                <th class="px-6 py-3">Email / Username</th>
+                                <th class="px-6 py-3">Email</th>
                                 <th class="px-6 py-3">Role</th>
                                 <th class="px-6 py-3">Aksi</th>
                             </tr>
