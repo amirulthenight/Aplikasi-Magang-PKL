@@ -63,7 +63,23 @@
                 <td>{{ $row->barang->nama_barang ?? '-' }}</td>
                 <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
                 <td>{{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}</td>
-                <td>{{ $row->status_peminjaman }}</td>
+                <td>
+                    @if($row->status_peminjaman == 'Dipinjam')
+                    @php
+                    $jatuhTempo = \Carbon\Carbon::parse($row->tanggal_kembali_rencana);
+                    $isTerlambat = now()->gt($jatuhTempo);
+                    $hariTerlambat = now()->diffInDays($jatuhTempo);
+                    @endphp
+                    @if($isTerlambat)
+                    {{-- Gunakan inline style karena ini PDF --}}
+                    <span style="color: red; font-weight: bold;">Terlambat {{ $hariTerlambat == 0 ? '< 1' : $hariTerlambat }} Hari</span>
+                    @else
+                    Dipinjam
+                    @endif
+                    @else
+                    {{ $row->status_peminjaman }}
+                    @endif
+                </td>
                 @endif
             </tr>
             @endforeach

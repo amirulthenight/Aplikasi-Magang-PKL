@@ -50,7 +50,16 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         @if($row->status_peminjaman == 'Dipinjam')
+                                        @php
+                                        $jatuhTempo = \Carbon\Carbon::parse($row->tanggal_kembali_rencana);
+                                        $isTerlambat = now()->gt($jatuhTempo);
+                                        $hariTerlambat = now()->diffInDays($jatuhTempo);
+                                        @endphp
+                                        @if($isTerlambat)
+                                        <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">Terlambat {{ $hariTerlambat == 0 ? '< 1' : $hariTerlambat }} Hari</span>
+                                        @else
                                         <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">Dipinjam</span>
+                                        @endif
                                         @elseif($row->status_peminjaman == 'Kembali')
                                         <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">Kembali</span>
                                         @else
