@@ -91,11 +91,7 @@ class DashboardController extends Controller
             ->where('tanggal_kembali_rencana', '<', now())
             ->orderBy('tanggal_kembali_rencana', 'asc')
             ->take(5)
-            ->get()
-            ->map(function ($item) {
-                $item->durasi_telat = Carbon::parse($item->tanggal_kembali_rencana)->diffForHumans(null, true) . ' overdue';
-                return $item;
-            });
+            ->get();
 
         // Tabel Bawah (Aktivitas Admin)
         $aktivitasTerkini = Peminjaman::with(['karyawan', 'barang'])

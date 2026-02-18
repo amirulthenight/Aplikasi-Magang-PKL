@@ -29,7 +29,7 @@ class Peminjaman extends Model
             return null;
         }
 
-        $wajibKembali = \Carbon\Carbon::parse($this->tanggal_wajib_kembali);
+        $wajibKembali = \Carbon\Carbon::parse($this->tanggal_kembali_rencana);
         $sekarang = now();
 
         // PERBAIKAN: Gunakan diffInDays untuk total hari yang akurat
@@ -86,7 +86,7 @@ class Peminjaman extends Model
     protected function isOverdue(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->status == 'Dipinjam' && now()->gt($this->tanggal_wajib_kembali),
+            get: fn() => $this->status_peminjaman == 'Dipinjam' && now()->gt($this->tanggal_kembali_rencana),
         );
     }
 
@@ -94,7 +94,7 @@ class Peminjaman extends Model
     {
         return Attribute::make(
             get: fn() => $this->is_overdue
-                ? now()->diffInDays($this->tanggal_wajib_kembali)
+                ? now()->diffInDays($this->tanggal_kembali_rencana)
                 : 0,
         );
     }
@@ -104,11 +104,11 @@ class Peminjaman extends Model
         return Attribute::make(
             get: fn() => (
                 // Hanya berlaku jika statusnya sudah Selesai
-                $this->status === 'Selesai' &&
+                $this->status_peminjaman === 'Kembali' &&
                 // Pastikan ada tanggal kembali
-                $this->tanggal_kembali &&
+                $this->tanggal_kembali_aktual &&
                 // Bandingkan tanggal kembali dengan tanggal wajib kembali
-                \Carbon\Carbon::parse($this->tanggal_kembali)->gt(\Carbon\Carbon::parse($this->tanggal_wajib_kembali))
+                \Carbon\Carbon::parse($this->tanggal_kembali_aktual)->gt(\Carbon\Carbon::parse($this->tanggal_kembali_rencana))
             )
         );
     }
