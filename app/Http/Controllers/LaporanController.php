@@ -34,7 +34,7 @@ class LaporanController extends Controller
         $data = Peminjaman::with(['barang', 'karyawan'])
             ->where('status_peminjaman', 'Kembali')
             ->get();
-        $judul = "Laporan Barang Sudah Kembali";
+        $judul = "Laporan Pengembalian";
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul'));
@@ -50,7 +50,7 @@ class LaporanController extends Controller
             ->where('status_peminjaman', 'Dipinjam')
             ->where('tanggal_kembali_rencana', '<', now())
             ->get();
-        $judul = "Laporan Barang Terlambat";
+        $judul = "Laporan Terlambat";
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul'));

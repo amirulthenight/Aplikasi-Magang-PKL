@@ -50,7 +50,7 @@
                                     <th class="px-6 py-3">Peminjam</th>
                                     <th class="px-6 py-3">Alasan Peminjam</th>
                                     <th class="px-6 py-3">Tgl/Waktu Pinjam</th>
-                                    <th class="px-6 py-3">Wajib Kembali</th>
+                                    <th class="px-6 py-3">Rencana Kembali</th>
                                     <th class="px-6 py-3">Kembali Aktual</th>
                                     <!-- <th class="px-6 py-3">Status</th> -->
                                     <th class="px-6 py-3 text-right">Aksi</th>

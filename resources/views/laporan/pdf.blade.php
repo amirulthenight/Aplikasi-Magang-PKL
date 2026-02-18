@@ -47,7 +47,7 @@
                 <th>Barang</th>
                 <th>Peminjam</th>
                 <th>Tgl Pinjam</th>
-                <th>Status</th>
+                <th>{{ $judul == 'Laporan Pengembalian' ? 'Tanggal Kembali' : 'Status' }}</th>
                 @endif
             </tr>
         </thead>
@@ -64,7 +64,9 @@
                 <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
                 <td>{{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}</td>
                 <td>
-                    @if($row->status_peminjaman == 'Dipinjam')
+                    @if($judul == 'Laporan Pengembalian')
+                    {{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}
+                    @elseif($row->status_peminjaman == 'Dipinjam')
                     @php
                     $jatuhTempo = \Carbon\Carbon::parse($row->tanggal_kembali_rencana);
                     $isTerlambat = now()->gt($jatuhTempo);
