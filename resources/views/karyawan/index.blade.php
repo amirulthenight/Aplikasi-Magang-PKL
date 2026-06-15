@@ -135,6 +135,7 @@
                                     <th scope="col" class="px-6 py-3">NIK</th>
                                     <th scope="col" class="px-6 py-3">Nama Karyawan</th>
                                     <th scope="col" class="px-6 py-3">Email</th>
+                                    <th scope="col" class="px-6 py-3">No Telp</th>
                                     <th scope="col" class="px-6 py-3">Jabatan</th>
                                     <th scope="col" class="px-6 py-3">Departemen</th>
                                     <th scope="col" class="px-6 py-3">Site</th>
@@ -160,6 +161,7 @@
                                     </td>
 
                                     <td class="px-6 py-4">{{ $karyawan->email ?? '-' }}</td>
+                                    <td class="px-6 py-4">{{ $karyawan->no_telp ?? '-' }}</td>
                                     <td class="px-6 py-4">{{ $karyawan->jabatan }}</td>
                                     <td class="px-6 py-4">{{ $karyawan->departemen ?? '-' }}</td>
                                     <td class="px-6 py-4">{{ $karyawan->site ?? '-' }}</td>

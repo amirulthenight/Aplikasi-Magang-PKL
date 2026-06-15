@@ -30,6 +30,12 @@
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
                         </div>
                         <div class="mt-4">
+                            <x-input-label for="no_telp" :value="__('Nomor Telepon / WhatsApp')" />
+                            <x-text-input id="no_telp" class="block mt-1 w-full" type="text" name="no_telp" :value="old('no_telp')" placeholder="Contoh: 08123456789 atau 628123456789" />
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: 08xxx atau 628xxx (untuk notifikasi WhatsApp)</p>
+                            <x-input-error :messages="$errors->get('no_telp')" class="mt-2" />
+                        </div>
+                        <div class="mt-4">
                             <x-input-label for="jabatan" :value="__('Jabatan')" />
                             <x-text-input id="jabatan" class="block mt-1 w-full" type="text" name="jabatan" :value="old('jabatan')" required />
                             <x-input-error :messages="$errors->get('jabatan')" class="mt-2" />

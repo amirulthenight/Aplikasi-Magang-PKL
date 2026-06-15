@@ -206,8 +206,8 @@ class KaryawanController extends Controller
 
         // Cari semua peminjaman yang sedang terlambat HANYA untuk karyawan ini
         $peminjamanTerlambat = $karyawan->peminjamans()
-            ->whereNull('tanggal_kembali')
-            ->where('tanggal_wajib_kembali', '<', now())
+            ->where('status_peminjaman', 'Dipinjam')
+            ->where('tanggal_kembali_rencana', '<', now())
             ->get();
 
         if ($peminjamanTerlambat->isEmpty()) {

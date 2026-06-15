@@ -101,7 +101,7 @@
                 <a href="{{ route('dashboard') }}" class="text-center">
                     <div class="text-3xl font-bold tracking-wider">
                         {{--LOGO BUMA--}}
-                        <span class="text-green-600 dark:text-green-500">L</span><span class="text-green-600 dark:text-green-500">O</span><span class="bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text">G</span><span class="text-green-600 dark:text-green-500">O</span>
+                        <span class="text-green-600 dark:text-green-500">B</span><span class="text-green-600 dark:text-green-500">U</span><span class="bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text">M</span><span class="text-green-600 dark:text-green-500">A</span>
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 tracking-wider">IT ASSET MANAGEMENT</p>
                 </a>
@@ -172,6 +172,16 @@
                         </svg>
                     </x-slot>
                     {{ __('Data Pengguna') }}
+                </x-sidebar-link>
+
+                {{-- 7. NOTIFIKASI PENGINGAT --}}
+                <x-sidebar-link :href="route('notifikasi.index')" :active="request()->routeIs('notifikasi.*')">
+                    <x-slot name="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                            <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 16a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                        </svg>
+                    </x-slot>
+                    <span class="font-semibold">{{ __('Notifikasi') }}</span>
                 </x-sidebar-link>
 
                 @endadmin
@@ -246,6 +256,16 @@
                             </svg>
                         </x-slot>
                         <span class="font-bold text-orange-600 dark:text-orange-400">{{ __('Form Pengembalian') }}</span>
+                    </x-sidebar-link>
+
+                    {{-- MOBILE MENU: NOTIFIKASI --}}
+                    <x-sidebar-link :href="route('notifikasi.index')" :active="request()->routeIs('notifikasi.*')">
+                        <x-slot name="icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zm0 16a3 3 0 01-3-3h6a3 3 0 01-3 3z" />
+                            </svg>
+                        </x-slot>
+                        <span class="font-semibold">{{ __('Notifikasi') }}</span>
                     </x-sidebar-link>
 
                     @endadmin

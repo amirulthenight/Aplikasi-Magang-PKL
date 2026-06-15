@@ -7,6 +7,7 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotifikasiController;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -69,6 +70,13 @@ Route::middleware('auth')->group(function () {
 
         // --- EMAIL & LAINNYA ---
         Route::post('laporan/kirim-pengingat-terlambat', [LaporanController::class, 'kirimPengingatTerlambat'])->name('laporan.kirimPengingat');
+
+        // --- NOTIFIKASI MANUAL ---
+        Route::get('notifikasi', [NotifikasiController::class, 'index'])->name('notifikasi.index');
+        Route::post('notifikasi/kirim/{id}', [NotifikasiController::class, 'kirimNotifikasiManual'])->name('notifikasi.kirimManual');
+        Route::post('notifikasi/kirim-batch', [NotifikasiController::class, 'kirimNotifikasiBatch'])->name('notifikasi.kirimBatch');
+        Route::post('notifikasi/kirim-terlambat', [NotifikasiController::class, 'kirimNotifikasiTerlambat'])->name('notifikasi.kirimTerlambat');
+        Route::get('notifikasi/status-whatsapp', [NotifikasiController::class, 'cekStatusWhatsApp'])->name('notifikasi.statusWhatsapp');
     });
 });
 

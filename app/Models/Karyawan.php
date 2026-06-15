@@ -14,11 +14,11 @@ class Karyawan extends Model
     protected $fillable = [
         'nik',
         'nama_karyawan',
-        'email', // <-- TAMBAHKAN INI
+        'email',
+        'no_telp', // Nomor Telepon/WhatsApp untuk notifikasi
         'jabatan',
         'departemen',
         'site',
-
     ];
 
     public function peminjamans()
