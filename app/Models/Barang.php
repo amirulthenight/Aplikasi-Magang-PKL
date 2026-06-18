@@ -21,6 +21,8 @@ class Barang extends Model
         'kategori',
         'merk',
         'stok', // Ganti site/rusak jadi stok
+        'status',
+        'keterangan', // Ditambahkan agar detail kerusakan diizinkan masuk
     ];
 
     // Accessor: Untuk mendapatkan status secara otomatis
@@ -56,10 +58,23 @@ class Barang extends Model
     // Scope untuk Laporan Barang Rusak
     public function scopeRusak($query, Request $request)
     {
-        $query->where('status', 'Rusak');
+        // ==================================================================================
+        // PERBAIKAN KRUSIAL: Logika diubah total untuk membaca dari sumber data yang benar.
+        // Laporan kerusakan sekarang menampilkan ASET (Barang) yang PERNAH memiliki
+        // riwayat pengembalian (`peminjamans`) dengan kondisi rusak.
+        // Ini tidak lagi membutuhkan kolom 'status' di tabel `barangs`.
+        // ==================================================================================
+        $query->whereHas('peminjamans', function ($peminjamanQuery) use ($request) {
+            $peminjamanQuery->where('status_peminjaman', 'Kembali')
+                ->whereNotNull('keterangan_kerusakan')
+                ->where('keterangan_kerusakan', '!=', '');
 
-        if ($request->filled('site')) {
-            $query->where('site', $request->site);
-        }
+            // Filter site juga diperbaiki agar mencari di data karyawan yang meminjam
+            if ($request->filled('site')) {
+                $peminjamanQuery->whereHas('karyawan', function ($karyawanQuery) use ($request) {
+                    $karyawanQuery->where('site', $request->site);
+                });
+            }
+        });
     }
 }

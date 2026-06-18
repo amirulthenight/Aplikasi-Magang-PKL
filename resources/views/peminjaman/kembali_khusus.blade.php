@@ -76,9 +76,12 @@
                                         <form action="{{ route('peminjaman.kembalikan', $pinjam->id) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian barang ini?');">
                                             @csrf
                                             @method('PATCH')
-                                            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow">
-                                                Kembali
-                                            </button>
+                                            <div class="flex flex-col items-center gap-2">
+                                                <textarea name="keterangan_kerusakan" rows="2" class="w-full text-xs border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md" placeholder="Catatan rusak (opsional)"></textarea>
+                                                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-3 rounded shadow text-xs w-full">
+                                                    Kembali
+                                                </button>
+                                            </div>
                                         </form>
                                     </td>
                                 </tr>

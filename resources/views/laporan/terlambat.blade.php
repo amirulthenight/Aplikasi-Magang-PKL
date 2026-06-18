@@ -23,8 +23,8 @@
                                 <input type="date" name="end_date" id="end_date" value="{{ request('end_date') }}" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 rounded-md shadow-sm">
                             </div>
                             <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-md hover:bg-blue-700">Filter</button>
-                            <button onclick="printReport()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300">PRINT</button>
-                            <a href="{{ route('laporan.terlambat.pdf', request()->query()) }}" target="_blank" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-md hover:bg-red-700">PDF</a>
+                            <button type="button" onclick="printReport()" class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300">PRINT</button>
+                            <a href="{{ route('laporan.terlambat', array_merge(request()->query(), ['export' => 'pdf'])) }}" target="_blank" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-md hover:bg-red-700">PDF</a>
                         </div>
                     </form>
 
@@ -84,7 +84,7 @@
 
     <script>
         function printReport() {
-            const url = "{{ route('laporan.terlambat.pdf', request()->query()) }}";
+            const url = "{{ route('laporan.terlambat', array_merge(request()->query(), ['export' => 'pdf'])) }}";
             const printWindow = window.open(url, '_blank');
             printWindow.onload = function() {
                 setTimeout(() => {

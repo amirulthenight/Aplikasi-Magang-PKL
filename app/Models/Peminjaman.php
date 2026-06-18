@@ -21,6 +21,7 @@ class Peminjaman extends Model
         'tanggal_kembali_aktual',
         'status_peminjaman',
         'alasan_pinjam',           // Wajib ada
+        'keterangan_kerusakan',    // WAJIB DITAMBAHKAN: Agar data kerusakan diizinkan masuk ke database
     ];
 
     public function getDurasiTelatAttribute(): ?string

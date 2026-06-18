@@ -8,7 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            <!-- Status WhatsApp -->
+            {{-- <!-- Status WhatsApp -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-4">
@@ -21,7 +21,7 @@
                         Klik "Cek Status" untuk memverifikasi koneksi WhatsApp
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Kirim Notifikasi H-3, H-2, H-1 -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -38,14 +38,17 @@
                             </div>
                             <div class="space-y-2">
                                 <button onclick="kirimNotifikasiBatch(3, 'email')" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                    Email Saja
+                                    Email
                                 </button>
-                                <button onclick="kirimNotifikasiBatch(3, 'whatsapp')" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                                    WhatsApp Saja
-                                </button>
-                                <button onclick="kirimNotifikasiBatch(3, 'semua')" class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+
+                                {{-- <button onclick="kirimNotifikasiBatch(3, 'whatsapp')" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                    WhatsApp
+                                </button> --}}
+
+                                {{-- <button onclick="kirimNotifikasiBatch(3, 'semua')" class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
                                     Email + WhatsApp
-                                </button>
+                                </button> --}}
+
                             </div>
                         </div>
 
@@ -57,14 +60,17 @@
                             </div>
                             <div class="space-y-2">
                                 <button onclick="kirimNotifikasiBatch(2, 'email')" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                    Email Saja
+                                    Email
                                 </button>
-                                <button onclick="kirimNotifikasiBatch(2, 'whatsapp')" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                                    WhatsApp Saja
-                                </button>
-                                <button onclick="kirimNotifikasiBatch(2, 'semua')" class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+
+                                {{-- <button onclick="kirimNotifikasiBatch(2, 'whatsapp')" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                    WhatsApp
+                                </button> --}}
+
+                                {{-- <button onclick="kirimNotifikasiBatch(2, 'semua')" class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
                                     Email + WhatsApp
-                                </button>
+                                </button> --}}
+
                             </div>
                         </div>
 
@@ -76,14 +82,17 @@
                             </div>
                             <div class="space-y-2">
                                 <button onclick="kirimNotifikasiBatch(1, 'email')" class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                    Email Saja
+                                    Email
                                 </button>
-                                <button onclick="kirimNotifikasiBatch(1, 'whatsapp')" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                                    WhatsApp Saja
-                                </button>
-                                <button onclick="kirimNotifikasiBatch(1, 'semua')" class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+
+                                {{-- <button onclick="kirimNotifikasiBatch(1, 'whatsapp')" class="w-full px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                    WhatsApp
+                                </button> --}}
+
+                                {{-- <button onclick="kirimNotifikasiBatch(1, 'semua')" class="w-full px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
                                     Email + WhatsApp
-                                </button>
+                                </button> --}}
+
                             </div>
                         </div>
                     </div>
@@ -98,14 +107,16 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <button onclick="kirimNotifikasiTerlambat('email')" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold">
-                            📧 Email Saja
+                            📧 Email
                         </button>
-                        <button onclick="kirimNotifikasiTerlambat('whatsapp')" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold">
-                            💬 WhatsApp Saja
+
+                        {{-- <button onclick="kirimNotifikasiTerlambat('whatsapp')" class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 font-semibold">
+                            💬 WhatsApp
                         </button>
                         <button onclick="kirimNotifikasiTerlambat('semua')" class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-semibold">
                             🚨 Email + WhatsApp
-                        </button>
+                        </button> --}}
+
                     </div>
                 </div>
             </div>

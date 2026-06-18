@@ -32,9 +32,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::get('/laporan/peminjaman', [LaporanController::class, 'peminjaman'])->name('laporan.peminjaman');
     Route::get('/laporan/pengembalian', [LaporanController::class, 'pengembalian'])->name('laporan.pengembalian');
-    Route::get('/laporan/terlambat', [LaporanController::class, 'terlambat'])->name('laporan.terlambat');
+    Route::get('/laporan/kerusakan', [LaporanController::class, 'kerusakan'])->name('laporan.kerusakan');
     Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
     Route::get('/laporan/per-karyawan', [LaporanController::class, 'perKaryawan'])->name('laporan.perKaryawan');
+    Route::get('/laporan/per-departemen', [LaporanController::class, 'perDepartemen'])->name('laporan.perDepartemen');
+    Route::get('/laporan/pengembalian-terlambat', [LaporanController::class, 'pengembalianTerlambat'])->name('laporan.pengembalianTerlambat');
+    Route::get('/laporan/terlambat', [LaporanController::class, 'terlambat'])->name('laporan.terlambat');
 
     // ==========================================================
     // AREA KHUSUS ADMIN (Barang, Karyawan, Input Peminjaman)

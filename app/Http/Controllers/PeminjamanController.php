@@ -110,19 +110,36 @@ class PeminjamanController extends Controller
     /**
      * Pengembalian Barang
      */
-    public function kembalikan($id)
+    public function kembalikan(Request $request, $id)
     {
         $peminjaman = Peminjaman::findOrFail($id);
 
-        $peminjaman->update([
+        $updateData = [
             'status_peminjaman' => 'Kembali',
-            'tanggal_kembali_aktual' => now()
-        ]);
+            'tanggal_kembali_aktual' => now(),
+        ];
 
-        // Balikin Stok
-        $peminjaman->barang->increment('stok');
+        $isRusak = $request->filled('keterangan_kerusakan');
 
-        return back()->with('success', 'Barang dikembalikan & Stok bertambah!');
+        if (\Illuminate\Support\Facades\Schema::hasColumn('peminjamans', 'keterangan_kerusakan')) {
+            $updateData['keterangan_kerusakan'] = $request->input('keterangan_kerusakan');
+        }
+
+        $peminjaman->update($updateData);
+
+        $barang = $peminjaman->barang;
+
+        // Logika disederhanakan: Hanya fokus pada penambahan stok.
+        // Laporan kerusakan akan membaca dari 'keterangan_kerusakan' di tabel peminjaman.
+        if ($isRusak) {
+            // PENTING: Stok TIDAK dikembalikan agar tidak bisa dipinjam orang lain lagi
+            $message = 'Barang dikembalikan dengan catatan KERUSAKAN. Aset masuk ke Laporan Kerusakan.';
+        } else {
+            $barang->increment('stok');
+            $message = 'Barang berhasil dikembalikan secara normal & Stok telah ditambahkan.';
+        }
+
+        return back()->with('success', $message);
     }
 
     public function edit(Peminjaman $peminjaman)

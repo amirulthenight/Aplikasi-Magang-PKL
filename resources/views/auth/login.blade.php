@@ -18,14 +18,19 @@
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
         {{-- Logo --}}
         <div>
-            <a href="/" class="text-center">
-                <div class="text-5xl font-bold tracking-wider">
-                    <span class="text-green-600 dark:text-green-500">B</span><span
-                        class="text-green-600 dark:text-green-500">U</span><span
-                        class="bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text">M</span><span
-                        class="text-green-600 dark:text-green-500">A</span>
+            <a href="/" class="flex items-center justify-center gap-5">
+                @if (file_exists(public_path('images/buma-logo.png')))
+                <img src="{{ asset('images/buma-logo.png') }}" alt="Logo BUMA" class="h-16 w-auto object-contain">
+                @endif
+                <div class="text-center">
+                    <div class="text-5xl font-bold tracking-wider">
+                        <span class="text-green-600 dark:text-green-500">B</span><span
+                            class="text-green-600 dark:text-green-500">U</span><span
+                            class="bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text">M</span><span
+                            class="text-green-600 dark:text-green-500">A</span>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 tracking-wider">IT ASSET MANAGEMENT</p>
                 </div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 tracking-wider">IT ASSET MANAGEMENT</p>
             </a>
         </div>
 

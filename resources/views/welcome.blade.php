@@ -47,13 +47,18 @@
         <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-green-50/50 dark:from-gray-800/50 dark:via-transparent dark:to-black/50"></div>
         <div class="max-w-7xl mx-auto p-6 lg:p-8 relative animate-entry">
             <div class="flex justify-center">
-                <div class="text-5xl font-bold tracking-wider text-center">
-                    <span class="logo-letter text-green-600 dark:text-green-500" style="animation-delay: 0.2s;">B</span>
-                    <span class="logo-letter text-green-600 dark:text-green-500" style="animation-delay: 0.3s;">U</span>
-                    <span class="logo-letter bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text" style="animation-delay: 0.4s;">M</span>
-                    <span class="logo-letter text-green-600 dark:text-green-500" style="animation-delay: 0.5s;">A</span>
-                    <p class="text-lg font-medium text-gray-600 dark:text-gray-400 mt-2 tracking-normal">IT ASSET
-                        MANAGEMENT</p>
+                <div class="flex items-center gap-6">
+                    @if (file_exists(public_path('images/buma-logo.png')))
+                    <img src="{{ asset('images/buma-logo.png') }}" alt="Logo BUMA" class="h-20 w-auto object-contain">
+                    @endif
+                    <div class="text-5xl font-bold tracking-wider text-center">
+                        <span class="logo-letter text-green-600 dark:text-green-500" style="animation-delay: 0.2s;">B</span>
+                        <span class="logo-letter text-green-600 dark:text-green-500" style="animation-delay: 0.3s;">U</span>
+                        <span class="logo-letter bg-gradient-to-r from-blue-500 to-orange-400 text-transparent bg-clip-text" style="animation-delay: 0.4s;">M</span>
+                        <span class="logo-letter text-green-600 dark:text-green-500" style="animation-delay: 0.5s;">A</span>
+                        <p class="text-lg font-medium text-gray-600 dark:text-gray-400 mt-2 tracking-normal">IT ASSET
+                            MANAGEMENT</p>
+                    </div>
                 </div>
             </div>
 

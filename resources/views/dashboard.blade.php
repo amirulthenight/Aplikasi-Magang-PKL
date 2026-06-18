@@ -137,6 +137,44 @@
     <div class="py-8">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
 
+            {{-- Foto Tempat Penelitian BUMA Adaro Tanjung --}}
+            <div class="mb-8">
+                <h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">BUMA ADT</h3>
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    @foreach (['penelitian-1.jpg', 'penelitian-2.jpg', 'penelitian-3.jpg'] as $index => $foto)
+                    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800">
+                        @if (file_exists(public_path('images/penelitian/' . $foto)))
+                        <img src="{{ asset('images/penelitian/' . $foto) }}" alt="Foto penelitian {{ $index + 1 }}" class="h-48 w-full object-cover">
+                        @else
+                        <div class="flex h-48 flex-col items-center justify-center p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+                            <svg class="mb-2 h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+                            </svg>
+                            <span>Foto {{ $index + 1 }}</span>
+                            <span class="mt-1 text-xs">Letakkan di: <code class="text-green-600 dark:text-green-400">public/images/penelitian/{{ $foto }}</code></span>
+                        </div>
+                        @endif
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Visi & Misi --}}
+            <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div class="rounded-lg border border-green-200 bg-white p-5 dark:border-green-800 dark:bg-gray-800">
+                    <h4 class="mb-2 text-sm font-bold uppercase tracking-wide text-green-700 dark:text-green-400">Visi</h4>
+                    <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                        Menjadi mitra kerja terbaik untuk solusi pertambangan dan energi yang berkelas dunia yang bertanggung jawab terhadap lingkungan.
+                    </p>
+                </div>
+                <div class="rounded-lg border border-blue-200 bg-white p-5 dark:border-blue-800 dark:bg-gray-800">
+                    <h4 class="mb-2 text-sm font-bold uppercase tracking-wide text-blue-700 dark:text-blue-400">Misi</h4>
+                    <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">
+                        Memberikan dampak sosial yang berkelanjutan dan nilai bagi pemegang saham, memaksimalkan potensi karyawan, menggunakan teknologi terdepan, dan memberdayakan masyarakat, secara aktif memajukan generasi Indonesia.
+                    </p>
+                </div>
+            </div>
+
             <div x-data="{}" x-init="
                     let cards = $el.querySelectorAll('.stat-card');
                     cards.forEach((card, index) => {
