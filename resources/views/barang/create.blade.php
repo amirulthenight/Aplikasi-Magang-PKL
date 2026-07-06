@@ -46,6 +46,11 @@
                             <p class="text-xs text-gray-500 mt-1">*Masukkan jumlah unit yang tersedia.</p>
                         </div>
 
+                        <div class="mb-4">
+                            <label for="lokasi_simpan" class="block text-gray-700 text-sm font-bold mb-2">Lokasi Simpan Gudang (Opsional)</label>
+                            <input type="text" name="lokasi_simpan" id="lokasi_simpan" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Contoh: Rak A1 / Lemari Server">
+                        </div>
+
                         <div class="flex items-center justify-between">
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                 Simpan

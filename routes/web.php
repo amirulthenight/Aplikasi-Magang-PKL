@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/per-departemen', [LaporanController::class, 'perDepartemen'])->name('laporan.perDepartemen');
     Route::get('/laporan/pengembalian-terlambat', [LaporanController::class, 'pengembalianTerlambat'])->name('laporan.pengembalianTerlambat');
     Route::get('/laporan/terlambat', [LaporanController::class, 'terlambat'])->name('laporan.terlambat');
-
+    Route::get('/laporan/tracking-lokasi', [LaporanController::class, 'trackingLokasi'])->name('laporan.trackingLokasi');
     // ==========================================================
     // AREA KHUSUS ADMIN (Barang, Karyawan, Input Peminjaman)
     // ==========================================================

@@ -21,6 +21,7 @@
                         </div>
                         <div class="text-left md:text-right">
                             <p><strong>Status Saat Ini:</strong> <x-status-badge :status="$barang->status" /></p>
+                            <p><strong>Lokasi Simpan (Gudang):</strong> {{ $barang->lokasi_simpan ?: 'Belum diset' }}</p>
                             <p><strong>Serial Number:</strong> {{ $barang->serial_number ?? '-' }}</p>
                             <p><strong>Site:</strong> {{ $barang->site ?? '-' }}</p>
                         </div>

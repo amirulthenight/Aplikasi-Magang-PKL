@@ -47,6 +47,7 @@ class BarangController extends Controller
             'kategori'    => 'required',
             'merk'        => 'nullable',
             'stok'        => 'required|integer|min:0',
+            'lokasi_simpan'=> 'nullable|string',
             'keterangan'  => 'nullable|string', // Kolom Keterangan Masuk Sini
         ]);
 
@@ -91,6 +92,7 @@ class BarangController extends Controller
             'kategori'    => 'required',
             'merk'        => 'nullable',
             'stok'        => 'required|integer|min:0',
+            'lokasi_simpan'=> 'nullable|string',
             'keterangan'  => 'nullable|string', // Update Keterangan
         ]);
 

@@ -21,6 +21,7 @@ class Barang extends Model
         'kategori',
         'merk',
         'stok', // Ganti site/rusak jadi stok
+        'lokasi_simpan',
         'status',
         'keterangan', // Ditambahkan agar detail kerusakan diizinkan masuk
     ];
@@ -31,6 +32,8 @@ class Barang extends Model
     {
         return $this->stok > 0 ? 'Tersedia' : 'Tidak Tersedia';
     }
+
+
 
     public function peminjamans()
     {
@@ -43,6 +46,7 @@ class Barang extends Model
             $query->where(function ($q) use ($request) {
                 $q->where('nama_barang', 'like', '%' . $request->search . '%')
                     ->orWhere('kode_barang', 'like', '%' . $request->search . '%')
+                    ->orWhere('lokasi_simpan', 'like', '%' . $request->search . '%')
                     ->orWhere('serial_number', 'like', '%' . $request->search . '%');
             });
         }

@@ -17,7 +17,8 @@
                         </a>
 
                         {{-- Filter Kategori (Baru) --}}
-                        <form action="{{ route('barang.index') }}" method="GET" class="flex items-center">
+                        <form action="{{ route('barang.index') }}" method="GET" class="flex items-center gap-2">
+                            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari barang..." class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm text-sm" onkeydown="if(event.key === 'Enter'){this.form.submit();}">
                             <select name="kategori" onchange="this.form.submit()" class="border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-blue-500 focus:ring-blue-500 rounded-md shadow-sm text-sm">
                                 <option value="">-- Semua Kategori --</option>
                                 <option value="Laptop" {{ request('kategori') == 'Laptop' ? 'selected' : '' }}>Laptop</option>
@@ -26,6 +27,7 @@
                                 <option value="Aksesoris" {{ request('kategori') == 'Aksesoris' ? 'selected' : '' }}>Aksesoris</option>
                                 <option value="Lainnya" {{ request('kategori') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                             </select>
+                            <button type="submit" class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-md text-sm font-semibold hover:bg-gray-300 dark:hover:bg-gray-600 transition">Cari</button>
                         </form>
                     </div>
 
@@ -49,6 +51,7 @@
                                     {{-- Kolom Keterangan Baru --}}
                                     <th scope="col" class="py-3 px-6">Keterangan</th>
                                     <th scope="col" class="py-3 px-6 text-center">Status</th>
+                                    <th scope="col" class="py-3 px-6">Lokasi Simpan</th>
                                     <th scope="col" class="py-3 px-6 text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -74,6 +77,9 @@
                                         @else
                                         <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">Tidak Tersedia</span>
                                         @endif
+                                    </td>
+                                    <td class="py-3 px-6 text-sm text-gray-600 dark:text-gray-400">
+                                        {{ $barang->lokasi_simpan ?: 'Belum diset' }}
                                     </td>
 
                                     <td class="py-3 px-6 text-center">

@@ -209,6 +209,11 @@
                 <th>Tgl Kembali</th>
                 <th>Detail Kerusakan</th>
                 <th>Status</th>
+                @elseif($tipe === 'tracking_lokasi')
+                <th>Aset IT</th>
+                <th>Sisa Stok (Gudang)</th>
+                <th>Total Dipinjam</th>
+                <th>Detail Tracking Lokasi</th>
                 @elseif(isset($data[0]) && isset($data[0]->stok))
                 <th>Kode</th>
                 <th>Nama Barang</th>
@@ -251,6 +256,27 @@
                 <td>{{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}</td>
                 <td>{{ $row->keterangan_kerusakan ?? 'Ada Kerusakan' }}</td>
                 <td>{{ $row->status_aset ?? 'Rusak' }}</td>
+                @elseif($tipe === 'tracking_lokasi')
+                <td>
+                    <strong>{{ $row->kode_barang }} - {{ $row->nama_barang }}</strong><br>
+                    <span style="font-size: 9px;">Kategori: {{ $row->kategori }}</span>
+                </td>
+                <td style="text-align: center;">{{ $row->stok }}</td>
+                <td style="text-align: center;">{{ $row->peminjamans->count() }}</td>
+                <td>
+                    <ul style="margin: 0; padding-left: 15px; font-size: 10px;">
+                        @if($row->stok > 0)
+                            <li style="color: green;">Tersedia di: {{ $row->lokasi_simpan ?: 'Gudang Utama' }}</li>
+                        @endif
+                        @foreach($row->peminjamans as $pinjam)
+                            <li style="color: orange; margin-bottom: 3px;">
+                                Dipinjam: {{ $pinjam->karyawan->nama_karyawan ?? '-' }}<br>
+                                Site: {{ $pinjam->karyawan->site ?? '-' }} ({{ $pinjam->karyawan->departemen ?? '-' }})<br>
+                                Sejak: {{ \Carbon\Carbon::parse($pinjam->tanggal_pinjam)->format('d M Y') }}
+                            </li>
+                        @endforeach
+                    </ul>
+                </td>
                 @elseif(isset($row->stok))
                 <td>{{ $row->kode_barang }}</td>
                 <td>{{ $row->nama_barang }}</td>

@@ -201,4 +201,34 @@ class LaporanController extends Controller
 
         return view('laporan.terlambat', compact('peminjamanTerlambat'));
     }
+
+    // 8. LAPORAN TRACKING LOKASI BARANG
+    public function trackingLokasi(Request $request)
+    {
+        $query = Barang::with(['peminjamans' => function ($q) {
+            $q->where('status_peminjaman', 'Dipinjam')->with('karyawan');
+        }]);
+
+        if ($request->has('sort_by')) {
+            $sortBy = $request->sort_by;
+            $order = $request->get('order', 'asc');
+            if (in_array($sortBy, ['nama_barang', 'kategori', 'stok'])) {
+                $query->orderBy($sortBy, $order);
+            }
+        } else {
+            $query->orderBy('nama_barang', 'asc');
+        }
+
+        $barangs = $query->get();
+        $judul = 'Laporan Tracking Lokasi Aset IT';
+        $tipe = 'tracking_lokasi';
+
+        if ($request->has('export') && $request->export == 'pdf') {
+            $data = $barangs;
+            $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul', 'tipe'));
+            return $pdf->download('laporan_tracking_lokasi.pdf');
+        }
+
+        return view('laporan.tracking_lokasi', compact('barangs', 'judul'));
+    }
 }
