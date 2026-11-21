@@ -111,29 +111,40 @@
 
         .signature-box {
             float: right;
-            width: 280px;
+            width: 220px;
             text-align: left;
         }
 
         .signature-box p {
-            margin: 4px 0;
+            margin: 2px 0;
             font-size: 12px;
         }
 
         .signature-scribble {
-            min-height: 60px;
-            margin: 10px 0;
+            height: 55px;
+            margin: 6px 0 4px 0;
+            display: block;
+        }
+
+        .signature-scribble img {
+            height: 55px;
+            width: auto;
+            max-width: 160px;
+            display: block;
+            object-fit: contain;
         }
 
         .signature-name {
             font-weight: bold;
-            margin-top: 4px;
+            margin-top: 2px;
+            font-size: 12px;
         }
 
         .signature-title {
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-size: 12px;
         }
 
         .clearfix::after {
@@ -156,11 +167,11 @@
             <tr>
                 <td class="kop-logo">
                     @if (file_exists(public_path('images/buma-logo.png')))
-                    @php
-                        $logoData = base64_encode(file_get_contents(public_path('images/buma-logo.png')));
-                        $logoSrc = 'data:image/png;base64,' . $logoData;
-                    @endphp
-                    <img src="{{ $logoSrc }}" alt="Logo BUMA">
+                        @php
+                            $logoData = base64_encode(file_get_contents(public_path('images/buma-logo.png')));
+                            $logoSrc = 'data:image/png;base64,' . $logoData;
+                        @endphp
+                        <img src="{{ $logoSrc }}" alt="Logo BUMA">
                     @endif
                 </td>
                 <td class="kop-text">
@@ -188,127 +199,135 @@
         <thead>
             <tr>
                 <th>No</th>
-                @if($tipe === 'departemen')
-                <th>Departemen</th>
-                <th>Total Peminjaman</th>
-                <th>Sedang Dipinjam</th>
-                <th>Sudah Kembali</th>
-                <th>Terlambat</th>
+                @if ($tipe === 'departemen')
+                    <th>Departemen</th>
+                    <th>Total Peminjaman</th>
+                    <th>Sedang Dipinjam</th>
+                    <th>Sudah Kembali</th>
+                    <th>Terlambat</th>
                 @elseif($tipe === 'pengembalian_terlambat')
-                <th>Barang</th>
-                <th>Peminjam</th>
-                <th>Departemen</th>
-                <th>Tgl Pinjam</th>
-                <th>Tgl Rencana Kembali</th>
-                <th>Tgl Kembali Aktual</th>
-                <th>Keterlambatan</th>
+                    <th>Barang</th>
+                    <th>Peminjam</th>
+                    <th>Departemen</th>
+                    <th>Tgl Pinjam</th>
+                    <th>Tgl Rencana Kembali</th>
+                    <th>Tgl Kembali Aktual</th>
+                    <th>Keterlambatan</th>
                 @elseif($tipe === 'kerusakan')
-                <th>Barang</th>
-                <th>Kode Barang</th>
-                <th>Peminjam Terakhir</th>
-                <th>Tgl Kembali</th>
-                <th>Detail Kerusakan</th>
-                <th>Status</th>
+                    <th>Barang</th>
+                    <th>Kode Barang</th>
+                    <th>Peminjam Terakhir</th>
+                    <th>Tgl Kembali</th>
+                    <th>Detail Kerusakan</th>
+                    <th>Status</th>
                 @elseif($tipe === 'tracking_lokasi')
-                <th>Aset IT</th>
-                <th>Sisa Stok (Gudang)</th>
-                <th>Total Dipinjam</th>
-                <th>Detail Tracking Lokasi</th>
+                    <th>Aset IT</th>
+                    <th>Sisa Stok (Gudang)</th>
+                    <th>Total Dipinjam</th>
+                    <th>Detail Tracking Lokasi</th>
                 @elseif(isset($data[0]) && isset($data[0]->stok))
-                <th>Kode</th>
-                <th>Nama Barang</th>
-                <th>Stok</th>
+                    <th>Kode</th>
+                    <th>Nama Barang</th>
+                    <th>Stok</th>
                 @else
-                <th>Barang</th>
-                <th>Peminjam</th>
-                <th>Tgl Pinjam</th>
-                <th>{{ $judul == 'Laporan Pengembalian' ? 'Tanggal Kembali' : 'Status' }}</th>
+                    <th>Barang</th>
+                    <th>Peminjam</th>
+                    <th>Tgl Pinjam</th>
+                    <th>{{ $judul == 'Laporan Pengembalian' ? 'Tanggal Kembali' : 'Status' }}</th>
                 @endif
             </tr>
         </thead>
         <tbody>
             @forelse($data as $index => $row)
-            <tr>
-                <td>{{ $index + 1 }}</td>
-                @if($tipe === 'departemen')
-                <td>{{ $row->departemen }}</td>
-                <td style="text-align: center;">{{ $row->total }}</td>
-                <td style="text-align: center;">{{ $row->dipinjam }}</td>
-                <td style="text-align: center;">{{ $row->kembali }}</td>
-                <td style="text-align: center;">{{ $row->terlambat }}</td>
-                @elseif($tipe === 'pengembalian_terlambat')
-                <td>{{ $row->barang->nama_barang ?? '-' }}</td>
-                <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
-                <td>{{ $row->karyawan->departemen ?? '-' }}</td>
-                <td>{{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->format('d-m-Y') }}</td>
-                <td>{{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}</td>
-                <td>
-                    @php
-                    $hariTerlambat = \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->diffInDays(\Carbon\Carbon::parse($row->tanggal_kembali_aktual));
-                    @endphp
-                    {{ $hariTerlambat }} Hari
-                </td>
-                @elseif($tipe === 'kerusakan')
-                <td>{{ $row->barang->nama_barang ?? '-' }}</td>
-                <td>{{ $row->barang->kode_barang ?? '-' }}</td>
-                <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
-                <td>{{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}</td>
-                <td>{{ $row->keterangan_kerusakan ?? 'Ada Kerusakan' }}</td>
-                <td>{{ $row->status_aset ?? 'Rusak' }}</td>
-                @elseif($tipe === 'tracking_lokasi')
-                <td>
-                    <strong>{{ $row->kode_barang }} - {{ $row->nama_barang }}</strong><br>
-                    <span style="font-size: 9px;">Kategori: {{ $row->kategori }}</span>
-                </td>
-                <td style="text-align: center;">{{ $row->stok }}</td>
-                <td style="text-align: center;">{{ $row->peminjamans->count() }}</td>
-                <td>
-                    <ul style="margin: 0; padding-left: 15px; font-size: 10px;">
-                        @if($row->stok > 0)
-                            <li style="color: green;">Tersedia di: {{ $row->lokasi_simpan ?: 'Gudang Utama' }}</li>
-                        @endif
-                        @foreach($row->peminjamans as $pinjam)
-                            <li style="color: orange; margin-bottom: 3px;">
-                                Dipinjam: {{ $pinjam->karyawan->nama_karyawan ?? '-' }}<br>
-                                Site: {{ $pinjam->karyawan->site ?? '-' }} ({{ $pinjam->karyawan->departemen ?? '-' }})<br>
-                                Sejak: {{ \Carbon\Carbon::parse($pinjam->tanggal_pinjam)->format('d M Y') }}
-                            </li>
-                        @endforeach
-                    </ul>
-                </td>
-                @elseif(isset($row->stok))
-                <td>{{ $row->kode_barang }}</td>
-                <td>{{ $row->nama_barang }}</td>
-                <td>{{ $row->stok }}</td>
-                @else
-                <td>{{ $row->barang->nama_barang ?? '-' }}</td>
-                <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
-                <td>{{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}</td>
-                <td>
-                    @if($judul == 'Laporan Pengembalian')
-                    {{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}
-                    @elseif($row->status_peminjaman == 'Dipinjam')
-                    @php
-                    $jatuhTempo = \Carbon\Carbon::parse($row->tanggal_kembali_rencana);
-                    $isTerlambat = now()->gt($jatuhTempo);
-                    $hariTerlambat = now()->diffInDays($jatuhTempo);
-                    @endphp
-                    @if($isTerlambat)
-                    <span style="color: red; font-weight: bold;">Terlambat {{ $hariTerlambat == 0 ? '< 1' : $hariTerlambat }} Hari</span>
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    @if ($tipe === 'departemen')
+                        <td>{{ $row->departemen }}</td>
+                        <td style="text-align: center;">{{ $row->total }}</td>
+                        <td style="text-align: center;">{{ $row->dipinjam }}</td>
+                        <td style="text-align: center;">{{ $row->kembali }}</td>
+                        <td style="text-align: center;">{{ $row->terlambat }}</td>
+                    @elseif($tipe === 'pengembalian_terlambat')
+                        <td>{{ $row->barang->nama_barang ?? '-' }}</td>
+                        <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
+                        <td>{{ $row->karyawan->departemen ?? '-' }}</td>
+                        <td>{{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->format('d-m-Y') }}</td>
+                        <td>{{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}
+                        </td>
+                        <td>
+                            @php
+                                $hariTerlambat = \Carbon\Carbon::parse($row->tanggal_kembali_rencana)->diffInDays(
+                                    \Carbon\Carbon::parse($row->tanggal_kembali_aktual),
+                                );
+                            @endphp
+                            {{ $hariTerlambat }} Hari
+                        </td>
+                    @elseif($tipe === 'kerusakan')
+                        <td>{{ $row->barang->nama_barang ?? '-' }}</td>
+                        <td>{{ $row->barang->kode_barang ?? '-' }}</td>
+                        <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
+                        <td>{{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}
+                        </td>
+                        <td>{{ $row->keterangan_kerusakan ?? 'Ada Kerusakan' }}</td>
+                        <td>{{ $row->status_aset ?? 'Rusak' }}</td>
+                    @elseif($tipe === 'tracking_lokasi')
+                        <td>
+                            <strong>{{ $row->kode_barang }} - {{ $row->nama_barang }}</strong><br>
+                            <span style="font-size: 9px;">Kategori: {{ $row->kategori }}</span>
+                        </td>
+                        <td style="text-align: center;">{{ $row->stok }}</td>
+                        <td style="text-align: center;">{{ $row->peminjamans->count() }}</td>
+                        <td>
+                            <ul style="margin: 0; padding-left: 15px; font-size: 10px;">
+                                @if ($row->stok > 0)
+                                    <li style="color: green;">Tersedia di: {{ $row->lokasi_simpan ?: 'Gudang Utama' }}
+                                    </li>
+                                @endif
+                                @foreach ($row->peminjamans as $pinjam)
+                                    <li style="color: orange; margin-bottom: 3px;">
+                                        Dipinjam: {{ $pinjam->karyawan->nama_karyawan ?? '-' }}<br>
+                                        Site: {{ $pinjam->karyawan->site ?? '-' }}
+                                        ({{ $pinjam->karyawan->departemen ?? '-' }})
+                                        <br>
+                                        Sejak: {{ \Carbon\Carbon::parse($pinjam->tanggal_pinjam)->format('d M Y') }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </td>
+                    @elseif(isset($row->stok))
+                        <td>{{ $row->kode_barang }}</td>
+                        <td>{{ $row->nama_barang }}</td>
+                        <td>{{ $row->stok }}</td>
                     @else
-                    Dipinjam
+                        <td>{{ $row->barang->nama_barang ?? '-' }}</td>
+                        <td>{{ $row->karyawan->nama_karyawan ?? '-' }}</td>
+                        <td>{{ \Carbon\Carbon::parse($row->tanggal_pinjam)->format('d-m-Y') }}</td>
+                        <td>
+                            @if ($judul == 'Laporan Pengembalian')
+                                {{ $row->tanggal_kembali_aktual ? \Carbon\Carbon::parse($row->tanggal_kembali_aktual)->format('d-m-Y') : '-' }}
+                            @elseif($row->status_peminjaman == 'Dipinjam')
+                                @php
+                                    $jatuhTempo = \Carbon\Carbon::parse($row->tanggal_kembali_rencana);
+                                    $isTerlambat = now()->gt($jatuhTempo);
+                                    $hariTerlambat = now()->diffInDays($jatuhTempo);
+                                @endphp
+                                @if ($isTerlambat)
+                                    <span style="color: red; font-weight: bold;">Terlambat
+                                        {{ $hariTerlambat == 0 ? '< 1' : $hariTerlambat }} Hari</span>
+                                @else
+                                    Dipinjam
+                                @endif
+                            @else
+                                {{ $row->status_peminjaman }}
+                            @endif
+                        </td>
                     @endif
-                    @else
-                    {{ $row->status_peminjaman }}
-                    @endif
-                </td>
-                @endif
-            </tr>
+                </tr>
             @empty
-            <tr>
-                <td colspan="10" style="text-align: center;">Tidak ada data laporan.</td>
-            </tr>
+                <tr>
+                    <td colspan="10" style="text-align: center;">Tidak ada data laporan.</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
@@ -318,14 +337,14 @@
         <div class="signature-box">
             <p>Balangan, {{ $tanggalTtd }}</p>
             <p>Mengetahui,</p>
-            <p class="signature-title">Manager IT</p>
+            <p class="signature-title">Supervisor IT</p>
             <div class="signature-scribble">
                 @if (file_exists(public_path('images/signature-manager-it.png')))
-                @php
-                    $ttdData = base64_encode(file_get_contents(public_path('images/signature-manager-it.png')));
-                    $ttdSrc = 'data:image/png;base64,' . $ttdData;
-                @endphp
-                <img src="{{ $ttdSrc }}" alt="Tanda Tangan" style="height: 75px; width: auto; display: block;">
+                    @php
+                        $ttdData = base64_encode(file_get_contents(public_path('images/signature-manager-it.png')));
+                        $ttdSrc = 'data:image/png;base64,' . $ttdData;
+                    @endphp
+                    <img src="{{ $ttdSrc }}" alt="Tanda Tangan">
                 @endif
             </div>
             <p class="signature-name">Budi Santoso</p>

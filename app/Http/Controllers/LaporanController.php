@@ -23,7 +23,7 @@ class LaporanController extends Controller
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul'));
-            return $pdf->download('laporan_peminjaman.pdf');
+            return $pdf->stream('laporan_peminjaman.pdf');
         }
         return view('laporan.hasil', compact('data', 'judul'));
     }
@@ -38,7 +38,7 @@ class LaporanController extends Controller
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul'));
-            return $pdf->download('laporan_pengembalian.pdf');
+            return $pdf->stream('laporan_pengembalian.pdf');
         }
         return view('laporan.hasil', compact('data', 'judul'));
     }
@@ -65,7 +65,7 @@ class LaporanController extends Controller
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul', 'tipe'));
-            return $pdf->download('laporan_kerusakan_aset.pdf');
+            return $pdf->stream('laporan_kerusakan_aset.pdf');
         }
 
         // Menggunakan view 'laporan.kerusakan' yang sudah dibuat
@@ -80,7 +80,7 @@ class LaporanController extends Controller
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul'));
-            return $pdf->download('laporan_stok.pdf');
+            return $pdf->stream('laporan_stok.pdf');
         }
         return view('laporan.stok', compact('data', 'judul'));
     }
@@ -106,7 +106,7 @@ class LaporanController extends Controller
         if ($request->has('export') && $request->export == 'pdf' && $selectedKaryawan) {
             $judul = "Laporan Peminjaman: " . $selectedKaryawan->nama_karyawan;
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul'));
-            return $pdf->download('laporan_' . $selectedKaryawan->nik . '.pdf');
+            return $pdf->stream('laporan_' . $selectedKaryawan->nik . '.pdf');
         }
 
         return view('laporan.per_karyawan', compact('karyawans', 'data', 'selectedKaryawan'));
@@ -136,7 +136,7 @@ class LaporanController extends Controller
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul', 'tipe'));
-            return $pdf->download('laporan_peminjaman_per_departemen.pdf');
+            return $pdf->stream('laporan_peminjaman_per_departemen.pdf');
         }
 
         return view('laporan.per-departemen', compact('data', 'judul'));
@@ -157,7 +157,7 @@ class LaporanController extends Controller
 
         if ($request->has('export') && $request->export == 'pdf') {
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul', 'tipe'));
-            return $pdf->download('laporan_pengembalian_terlambat.pdf');
+            return $pdf->stream('laporan_pengembalian_terlambat.pdf');
         }
 
         return view('laporan.pengembalian-terlambat', compact('data', 'judul'));
@@ -226,7 +226,7 @@ class LaporanController extends Controller
         if ($request->has('export') && $request->export == 'pdf') {
             $data = $barangs;
             $pdf = Pdf::loadView('laporan.pdf', compact('data', 'judul', 'tipe'));
-            return $pdf->download('laporan_tracking_lokasi.pdf');
+            return $pdf->stream('laporan_tracking_lokasi.pdf');
         }
 
         return view('laporan.tracking_lokasi', compact('barangs', 'judul'));
