@@ -195,6 +195,18 @@
         <p><strong>Tanggal Cetak:</strong> {{ $tanggalTtd }}</p>
     </div>
 
+    {{-- INFO TOTAL PEMELIHARAAN --}}
+    @if ($tipe === 'pemeliharaan')
+        <div class="info-tanggal">
+            <p>
+                <strong>Total Catatan:</strong> {{ $data->count() }}
+                &nbsp; | &nbsp;
+                <strong>Total Biaya Perbaikan:</strong>
+                Rp {{ number_format((float) $totalBiaya, 0, ',', '.') }}
+            </p>
+        </div>
+    @endif
+
     <table>
         <thead>
             <tr>
@@ -219,6 +231,15 @@
                     <th>Peminjam Terakhir</th>
                     <th>Tgl Kembali</th>
                     <th>Detail Kerusakan</th>
+                    <th>Status</th>
+                @elseif($tipe === 'pemeliharaan')
+                    <th>Aset</th>
+                    <th>Peminjam</th>
+                    <th>Tgl Kembali</th>
+                    <th>Kerusakan</th>
+                    <th>Tindakan Perbaikan</th>
+                    <th>Biaya</th>
+                    <th>Periode</th>
                     <th>Status</th>
                 @elseif($tipe === 'tracking_lokasi')
                     <th>Aset IT</th>
@@ -271,6 +292,46 @@
                         </td>
                         <td>{{ $row->keterangan_kerusakan ?? 'Ada Kerusakan' }}</td>
                         <td>{{ $row->status_aset ?? 'Rusak' }}</td>
+                    @elseif($tipe === 'pemeliharaan')
+                        <td>
+                            <strong>{{ $row->barang->kode_barang ?? '-' }}</strong><br>
+                            {{ $row->barang->nama_barang ?? '-' }}
+                        </td>
+                        <td>
+                            {{ $row->peminjaman?->karyawan?->nama_karyawan ?? '-' }}
+                        </td>
+                        <td>
+                            {{ $row->peminjaman?->tanggal_kembali_aktual
+                                ? \Carbon\Carbon::parse($row->peminjaman->tanggal_kembali_aktual)->format('d-m-Y')
+                                : '-' }}
+                        </td>
+                        <td>
+                            {{ $row->keterangan_kerusakan ?? '-' }}
+                            <br>
+                            @foreach ($row->checklist_kerusakan ?? [] as $key)
+                                <span style="font-size: 9px;">
+                                    - {{ $kerusakanOptions[$key] ?? $key }}
+                                </span><br>
+                            @endforeach
+                        </td>
+                        <td>
+                            {{ $row->tindakan_perbaikan ?? '-' }}
+                            <br>
+                            @foreach ($row->checklist_perbaikan ?? [] as $key)
+                                <span style="font-size: 9px;">
+                                    - {{ $perbaikanOptions[$key] ?? $key }}
+                                </span><br>
+                            @endforeach
+                        </td>
+                        <td>
+                            Rp {{ number_format((float) $row->biaya_perbaikan, 0, ',', '.') }}
+                        </td>
+                        <td>
+                            {{ $row->tanggal_mulai_perbaikan?->format('d-m-Y') ?? '-' }}
+                            -
+                            {{ $row->tanggal_selesai_perbaikan?->format('d-m-Y') ?? '-' }}
+                        </td>
+                        <td>{{ $row->status }}</td>
                     @elseif($tipe === 'tracking_lokasi')
                         <td>
                             <strong>{{ $row->kode_barang }} - {{ $row->nama_barang }}</strong><br>
@@ -326,7 +387,9 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="10" style="text-align: center;">Tidak ada data laporan.</td>
+                    <td colspan="{{ $tipe === 'pemeliharaan' ? 9 : 10 }}" style="text-align: center;">
+                        Tidak ada data.
+                    </td>
                 </tr>
             @endforelse
         </tbody>

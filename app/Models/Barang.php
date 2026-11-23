@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request; // <-- Jangan lupa tambahkan ini
 
 
@@ -38,6 +39,11 @@ class Barang extends Model
     public function peminjamans()
     {
         return $this->hasMany(Peminjaman::class);
+    }
+
+    public function pemeliharaans(): HasMany
+    {
+        return $this->hasMany(Pemeliharaan::class);
     }
 
     public function scopeFilter($query, Request $request)

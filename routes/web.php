@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\PemeliharaanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\NotifikasiController;
@@ -39,12 +40,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pengembalian-terlambat', [LaporanController::class, 'pengembalianTerlambat'])->name('laporan.pengembalianTerlambat');
     Route::get('/laporan/terlambat', [LaporanController::class, 'terlambat'])->name('laporan.terlambat');
     Route::get('/laporan/tracking-lokasi', [LaporanController::class, 'trackingLokasi'])->name('laporan.trackingLokasi');
+    Route::get('/laporan/pemeliharaan', [LaporanController::class, 'pemeliharaan'])
+        ->name('laporan.pemeliharaan');
     // ==========================================================
     // AREA KHUSUS ADMIN (Barang, Karyawan, Input Peminjaman)
     // ==========================================================
     Route::middleware('isAdmin')->group(function () {
-
-
 
         // --- BARANG ---
         Route::get('barang/pdf', [BarangController::class, 'cetakPdf'])->name('barang.pdf');
@@ -67,6 +68,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengembalian-cepat/cari', [PeminjamanController::class, 'cariByNik'])->name('peminjaman.cariByNik');
         Route::patch('peminjaman/{peminjaman}/kembalikan', [PeminjamanController::class, 'kembalikan'])->name('peminjaman.kembalikan');
         Route::resource('peminjaman', PeminjamanController::class); // Resource sudah mencakup index, create, store, edit, update, destroy
+
+        // --- PEMELIHARAAN ASET ---
+        Route::get('/pemeliharaan', [PemeliharaanController::class, 'index'])
+            ->name('pemeliharaan.index');
+
+        // FORM PENCATATAN PEMELIHARAAN
+        Route::get('pemeliharaan/{peminjaman}/create', [PemeliharaanController::class, 'create'])
+            ->name('pemeliharaan.create');
+
+        Route::post('pemeliharaan/{peminjaman}', [PemeliharaanController::class, 'store'])
+            ->name('pemeliharaan.store');
+
+        // PROSES DAN UPDATE PEMELIHARAAN
+        Route::get('pemeliharaan/{pemeliharaan}/edit', [PemeliharaanController::class, 'edit'])
+            ->name('pemeliharaan.edit');
+
+        Route::put('pemeliharaan/{pemeliharaan}', [PemeliharaanController::class, 'update'])
+            ->name('pemeliharaan.update');
 
         // --- USER/PENGGUNA ---
         Route::resource('users', \App\Http\Controllers\UserController::class);

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Peminjaman extends Model
 {
@@ -82,6 +83,11 @@ class Peminjaman extends Model
     public function karyawan()
     {
         return $this->belongsTo(Karyawan::class);
+    }
+
+    public function pemeliharaan(): HasOne
+    {
+        return $this->hasOne(Pemeliharaan::class);
     }
 
     protected function isOverdue(): Attribute

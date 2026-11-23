@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Peminjaman;
 use App\Models\Barang;
 use App\Models\Karyawan;
+use App\Models\Pemeliharaan;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class LaporanController extends Controller
@@ -201,6 +202,103 @@ class LaporanController extends Controller
 
         return view('laporan.terlambat', compact('peminjamanTerlambat'));
     }
+
+
+    /**
+     * Laporan Riwayat Pemeliharaan Aset IT
+     */
+    public function pemeliharaan(Request $request)
+    {
+        $validated = $request->validate([
+            'tanggal_awal' => ['nullable', 'date'],
+            'tanggal_akhir' => [
+                'nullable',
+                'date',
+                'after_or_equal:tanggal_awal',
+            ],
+        ]);
+
+        $query = Pemeliharaan::with([
+            'barang',
+            'peminjaman.karyawan',
+            'user',
+        ]);
+
+        // Filter berdasarkan tanggal pencatatan pemeliharaan.
+        if (!empty($validated['tanggal_awal'])) {
+            $query->whereDate(
+                'created_at',
+                '>=',
+                $validated['tanggal_awal']
+            );
+        }
+
+        if (!empty($validated['tanggal_akhir'])) {
+            $query->whereDate(
+                'created_at',
+                '<=',
+                $validated['tanggal_akhir']
+            );
+        }
+
+        $data = $query->latest('created_at')->get();
+
+        // Total seluruh biaya dari data yang sedang ditampilkan.
+        $totalBiaya = $data->sum(
+            fn($item) => (float) $item->biaya_perbaikan
+        );
+
+        $judul = 'Laporan Pemeliharaan Aset IT';
+        $tipe = 'pemeliharaan';
+
+        $kerusakanOptions = [
+            'layar' => 'Layar atau monitor',
+            'keyboard' => 'Keyboard atau tombol',
+            'mouse_touchpad' => 'Mouse atau touchpad',
+            'baterai_power' => 'Baterai atau sumber daya',
+            'port_konektor' => 'Port atau konektor',
+            'bodi_fisik' => 'Bodi atau casing perangkat',
+            'jaringan' => 'Jaringan atau konektivitas',
+            'software' => 'Sistem operasi atau perangkat lunak',
+            'lainnya' => 'Kerusakan lainnya',
+        ];
+
+        $perbaikanOptions = [
+            'pemeriksaan' => 'Pemeriksaan kondisi komponen',
+            'pembersihan' => 'Pembersihan perangkat',
+            'perbaikan_komponen' => 'Perbaikan komponen',
+            'penggantian_komponen' => 'Penggantian komponen',
+            'perbaikan_software' => 'Perbaikan perangkat lunak',
+            'pengujian' => 'Pengujian fungsi perangkat',
+            'lainnya' => 'Tindakan perbaikan lainnya',
+        ];
+
+        // Export PDF menggunakan tampilan khusus pemeliharaan.
+        if ($request->input('export') === 'pdf') {
+            $pdf = Pdf::loadView(
+                'laporan.pdf',
+                compact(
+                    'data',
+                    'judul',
+                    'tipe',
+                    'totalBiaya',
+                    'kerusakanOptions',
+                    'perbaikanOptions'
+                )
+            );
+
+            return $pdf->stream('laporan_pemeliharaan_aset.pdf');
+        }
+        // Tampilkan halaman laporan pemeliharaan
+        return view('laporan.pemeliharaan', compact(
+            'data',
+            'judul',
+            'totalBiaya',
+            'kerusakanOptions',
+            'perbaikanOptions'
+        ));
+    }
+
 
     // 8. LAPORAN TRACKING LOKASI BARANG
     public function trackingLokasi(Request $request)
